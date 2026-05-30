@@ -1,3 +1,37 @@
+# Syah Heavy Equipment | Industrial Portal
+
+Platform digital untuk pengadaan, penyewaan, dan pemeliharaan alat berat berskala industri.
+
+## 🏗️ Tech Stack
+- **Framework:** Next.js 15 (App Router)
+- **Styling:** Tailwind CSS
+- **Animation:** Framer Motion
+- **Language:** TypeScript
+- **Backend:** Supabase (Auth, Database, Storage)
+- **UI Components:** Shadcn/UI
+- **Icons**: Lucide React
+- **Analytics**: Recharts (untuk monitoring IoT)
+
+## Struktur Folder
+- `app/` : Halaman utama dan routing
+- `components/` : Komponen UI reusable (FleetCard, Charts, Nav)
+- `lib/` : Utilitas Supabase & Helper functions
+
+## Komitmen Desain
+Desain mengusung tema **"Industrial High-Tech"** dengan dominasi warna *Construction Yellow* (`#ca8a04`) dan *Matte Black* (`#0a0a0a`) untuk memberikan kesan profesional, kokoh, dan modern bagi klien industri skala besar.
+
+## 🚀 Fitur Utama
+- **Interactive Fleet Catalog:** Navigasi katalog alat berat dengan filter dinamis.
+- **Predictive Maintenance Module:** Dashboard untuk memantau status kesehatan mesin (IoT Integration ready).
+- **Industrial Animation Suite:** Animasi *scroll* yang terinspirasi dari gerakan mekanis alat berat.
+- **Client Portal:** Sistem manajemen sewa dan pemeliharaan berbasis akun.
+
+## 🛠️ Persiapan Pengembangan
+1. Clone repositori ini.
+2. Jalankan `npm install`.
+3. Konfigurasi `.env.local` dengan `SUPABASE_URL` dan `SUPABASE_ANON_KEY`.
+4. Jalankan `npm run dev` untuk memulai pengembangan.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
