@@ -18,7 +18,7 @@ export default function MachineHealthChart() {
         Sistem Monitor Real-Time
       </h3>
       
-      <div className="h-64">
+      <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>
