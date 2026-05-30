@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer";
-import Navbar from "@/components/PublicNavbar";
+import PublicNavbar from "@/components/PublicNavbar";
 
 export default function PublicLayout({
   children,
@@ -7,14 +7,14 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-neutral-950 text-white">
       {/* NAVBAR KHUSUS PUBLIK */}
-      <Navbar />
+      <PublicNavbar />
 
-      {/* Konten Halaman */}
-      <div className="flex-1">
+      {/* Konten Halaman - Berikan padding top/bottom jika navbar/footer Anda berposisi fixed */}
+      <main className="flex-1 w-full">
         {children}
-      </div>
+      </main>
 
       <Footer />
     </div>

@@ -14,7 +14,7 @@ const links = [
   { label: "Proyek", href: "/project" },
 ];
 
-export default function Navbar() {
+export default function PublicNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
