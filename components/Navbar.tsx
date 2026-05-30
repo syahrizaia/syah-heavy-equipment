@@ -71,6 +71,14 @@ export default function Navbar() {
                   {link.label} <ChevronRight size={16} />
                 </Link>
               ))}
+
+                <Link
+                href="/contact"
+                onClick={() => setIsOpen(false)}
+                className="text-yellow-600 font-bold uppercase flex justify-between items-center py-2 border-b border-neutral-900"
+                >
+                Hubungi Kami <ChevronRight size={16} />
+                </Link>
             </div>
           </motion.div>
         )}
