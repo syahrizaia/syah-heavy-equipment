@@ -9,14 +9,20 @@ const categories = ["Semua", "Excavator", "Truck", "Crane"];
 
 export default function FleetList({ initialData }: { initialData: any[] }) {
   const [activeCat, setActiveCat] = useState("Semua");
+
+  const sortedData = [...initialData].sort((a, b) => {
+    const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+    return dateB - dateA; // Mengurutkan dari waktu paling besar/baru
+  });
   
   // Filter untuk unit yang tersedia
-  const availableData = initialData.filter((i) => 
+  const availableData = sortedData.filter((i) => 
     !i.is_sold && (activeCat === "Semua" || i.category === activeCat)
   );
 
   // Filter untuk unit yang terjual (selalu ditampilkan di bagian bawah)
-  const soldData = initialData.filter((i) => i.is_sold === true);
+  const soldData = sortedData.filter((i) => i.is_sold === true);
 
   return (
     <section className="py-24 px-4 md:px-6 max-w-7xl mx-auto w-full overflow-hidden">

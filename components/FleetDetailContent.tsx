@@ -2,9 +2,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Zap, Gauge, ShieldCheck, Calendar } from "lucide-react";
+import { ArrowLeft, MapPin, Zap, Gauge, ShieldCheck, Calendar, Share2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
 function StatItem({ icon, label, value, valueColor = "text-white" }: { icon: any, label: string, value: string, valueColor?: string }) {
   return (
@@ -19,6 +20,35 @@ function StatItem({ icon, label, value, valueColor = "text-white" }: { icon: any
 }
 
 export default function FleetDetailContent({ fleet }: { fleet: any }) {
+  const [isCopied, setIsCopied] = useState(false); // State untuk status salin tautan
+
+  // Fungsi untuk membagikan tautan atau copy ke clipboard
+  const handleShare = async () => {
+    const shareData = {
+      title: fleet.title || "Detail Unit Armada",
+      text: `Cek unit ${fleet.title} (${fleet.model || ""}) di katalog armada kami.`,
+      url: typeof window !== "undefined" ? window.location.href : "",
+    };
+
+    // Cek jika browser mendukung Web Share API
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (error) {
+        console.log("Batal membagikan:", error);
+      }
+    } else {
+      // Fallback: Salin tautan ke clipboard
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000); // Reset status setelah 2 detik
+      } catch (error) {
+        alert("Gagal menyalin tautan.");
+      }
+    }
+  };
+  
   // Fungsi untuk memastikan URL valid untuk Next/Image
   const sanitizeUrl = (url: string) => {
     if (!url) return "/placeholder.jpg";
@@ -169,8 +199,8 @@ Mohon informasi lebih lanjut mengenai ketersediaan dan prosedur pembeliannya. Te
             </div>
             
             {/* Tombol Beli / Tanyakan Unit */}
-            <div className="pt-4">
-                <a 
+            <div className="pt-4 flex flex-col gap-4">
+                <Link
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -181,11 +211,18 @@ Mohon informasi lebih lanjut mengenai ketersediaan dan prosedur pembeliannya. Te
                 }`}
                 >
                     {fleet.is_sold ? "Tanyakan Unit Serupa" : "Hubungi Pembelian"}
-                </a>
+                </Link>
+                <button
+                  onClick={handleShare}
+                  className="flex items-center justify-center gap-2 w-full py-3 border border-neutral-800 hover:border-neutral-700 text-white bg-neutral-950 hover:bg-neutral-900 font-bold uppercase text-xs tracking-widest transition-all duration-300 rounded-lg cursor-pointer"
+                >
+                  <Share2 size={14} className={isCopied ? "text-green-400" : "text-slate-400"} />
+                  {isCopied ? "Tautan Disalin!" : "Bagikan Unit"}
+                </button>
                 {fleet.is_sold && (
-                <p className="text-[10px] text-slate-600 mt-2 text-center">
-                    Unit ini sudah tidak tersedia.
-                </p>
+                  <p className="text-[10px] text-slate-600 mt-2 text-center">
+                      Unit ini sudah tidak tersedia.
+                  </p>
                 )}
             </div>
           </div>

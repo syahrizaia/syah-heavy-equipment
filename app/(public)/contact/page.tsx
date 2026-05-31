@@ -67,7 +67,7 @@ export default function ContactPage() {
           >
             <ContactInfoItem icon={<MapPin size={24} />} title="Kantor Pusat" text="Jl. Kp. Kartika Murni, Wangunharja, Kec. Cikarang Utara, Kabupaten Bekasi, Jawa Barat, Indonesia" />
             <ContactInfoItem icon={<Phone size={24} />} title="Kontak Operasional" text="+62 812 2813 4488" />
-            <ContactInfoItem icon={<Mail size={24} />} title="Email Kemitraan" text="ulunsyahroni@gmail.com" />
+            <ContactInfoItem icon={<Mail size={24} />} title="Email Kemitraan" text="ulunsyahroni57@gmail.com" />
             <ContactInfoItem icon={<Clock size={24} />} title="Jam Operasional" text="Senin - Jumat: 08:00 - 17:00 | Sabtu: 08:00 - 13:00" />
           </motion.div>
         </div>

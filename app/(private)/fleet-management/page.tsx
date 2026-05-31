@@ -107,6 +107,10 @@ export default function FleetPage() {
         specs: specsObject
       };
 
+      if (unitToSave.id === null) {
+        delete unitToSave.id;
+      }
+
       // Gunakan .upsert() agar jika ada ID, dia update. Jika tidak, dia buat baru.
       const { error } = await supabase.from("fleet").upsert([unitToSave]);
       if (error) throw error;
@@ -274,7 +278,7 @@ export default function FleetPage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs text-slate-400 font-medium">Model *</label>
-              <input placeholder="Contoh: CAT 320D" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+              <input required placeholder="Contoh: CAT 320D" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
                 value={newUnit.model}
                 onChange={(e) => setNewUnit({...newUnit, model: e.target.value})} />
             </div>
