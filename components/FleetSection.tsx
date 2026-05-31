@@ -6,10 +6,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import FleetCard from "@/components/FleetCard";
 import Link from "next/link";
 
-const categories = ["Semua", "Excavator", "Truck", "Crane"];
-
 export default function FleetSection({ data }: { data: any[] }) {
   const [activeCat, setActiveCat] = useState("Semua");
+
+  const categories = [
+    "Semua",
+    ...Array.from(
+      new Set(
+        data
+          .map((item) => item.category) // Ambil semua kategori dari data
+          .filter(Boolean)              // Saring nilai null / undefined jika ada
+      )
+    ).sort()                            // Urutkan dari A-Z agar rapi
+  ];
 
   const sortedData = [...data].sort((a, b) => {
     const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;

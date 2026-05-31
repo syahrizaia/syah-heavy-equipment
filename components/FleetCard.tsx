@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function FleetCard({ fleet }: { fleet: any }) {
   const getFirstImage = () => {
     const images = Array.isArray(fleet.image_url) ? fleet.image_url : [fleet.image_url];
-    const firstUrl = images[0] || "/placeholder.jpg";
+    const firstUrl = images[0] || "/placeholder.png";
     
     // Sanitasi URL agar tetap konsisten dengan perbaikan sebelumnya
     return firstUrl.startsWith("http") ? firstUrl : `/${firstUrl.replace(/^\//, '')}`;
@@ -52,7 +52,7 @@ export default function FleetCard({ fleet }: { fleet: any }) {
       </div>
 
       <Link href={`/fleet/${fleet.id}`} className="w-full py-3 flex items-center justify-center gap-2 bg-neutral-950 border border-neutral-800 hover:bg-yellow-600 hover:text-white transition-all font-bold text-sm uppercase tracking-widest">
-        Lihat Spesifikasi <ArrowRight size={16} />
+        Lihat Detail <ArrowRight size={16} />
       </Link>
     </motion.div>
   );

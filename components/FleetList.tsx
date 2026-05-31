@@ -4,11 +4,24 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import FleetCard from "./FleetCard";
-
-const categories = ["Semua", "Excavator", "Truck", "Crane"];
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function FleetList({ initialData }: { initialData: any[] }) {
   const [activeCat, setActiveCat] = useState("Semua");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentSoldPage, setCurrentSoldPage] = useState(1);
+  const ITEMS_PER_PAGE = 15; // Batas maksimal data per halaman
+
+  const categories = [
+    "Semua",
+    ...Array.from(
+      new Set(
+        initialData
+          .map((item) => item.category)
+          .filter(Boolean)
+      )
+    ).sort()
+  ];
 
   const sortedData = [...initialData].sort((a, b) => {
     const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
@@ -20,9 +33,24 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
   const availableData = sortedData.filter((i) => 
     !i.is_sold && (activeCat === "Semua" || i.category === activeCat)
   );
+  const totalPages = Math.ceil(availableData.length / ITEMS_PER_PAGE);
+  const paginatedAvailableData = availableData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   // Filter untuk unit yang terjual (selalu ditampilkan di bagian bawah)
   const soldData = sortedData.filter((i) => i.is_sold === true);
+  const totalSoldPages = Math.ceil(soldData.length / ITEMS_PER_PAGE);
+  const paginatedSoldData = soldData.slice(
+    (currentSoldPage - 1) * ITEMS_PER_PAGE,
+    currentSoldPage * ITEMS_PER_PAGE
+  );
+
+  const handleCategoryChange = (cat: string) => {
+    setActiveCat(cat);
+    setCurrentPage(1);
+  };
 
   return (
     <section className="py-24 px-4 md:px-6 max-w-7xl mx-auto w-full overflow-hidden">
@@ -43,7 +71,7 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
           {categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => setActiveCat(cat)}
+              onClick={() => handleCategoryChange(cat)}
               className={`px-5 py-2.5 border font-bold uppercase text-xs tracking-widest transition-all flex-shrink-0 snap-start ${
                 activeCat === cat 
                   ? "bg-yellow-600 border-yellow-600 text-neutral-950" 
@@ -55,10 +83,11 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
           ))}
         </div>
 
+        {/* Grid Data - Menggunakan paginatedAvailableData */}
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           <AnimatePresence mode="popLayout">
-            {availableData.length > 0 ? (
-              availableData.map((fleet) => (
+            {paginatedAvailableData.length > 0 ? (
+              paginatedAvailableData.map((fleet) => (
                 <motion.div key={fleet.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full">
                   <FleetCard fleet={fleet} />
                 </motion.div>
@@ -68,6 +97,44 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
             )}
           </AnimatePresence>
         </motion.div>
+
+        {/* --- UI KOMPONEN PAGINATION --- */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-16">
+            {/* Tombol Previous */}
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className="p-3 border border-neutral-800 text-white hover:border-yellow-600 disabled:opacity-20 disabled:hover:border-neutral-800 transition-colors"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            
+            {/* Nomor Halaman */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-11 h-11 border font-bold text-xs transition-all ${
+                  currentPage === page
+                    ? "bg-yellow-600 border-yellow-600 text-neutral-950"
+                    : "border-neutral-800 text-white hover:border-yellow-600"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            {/* Tombol Next */}
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              className="p-3 border border-neutral-800 text-white hover:border-yellow-600 disabled:opacity-20 disabled:hover:border-neutral-800 transition-colors"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* --- SECTION: ARSIP UNIT TERJUAL --- */}
@@ -75,13 +142,59 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
         <h3 className="text-2xl md:text-3xl font-bold font-barlow text-white uppercase mb-8">
           Arsip Armada Terjual
         </h3>
+        
+        {/* Grid Data Terjual (Menggunakan paginatedSoldData) */}
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 opacity-80 grayscale">
-          {soldData.map((fleet) => (
-            <div key={fleet.id} className="w-full">
-              <FleetCard fleet={fleet} />
-            </div>
-          ))}
+          <AnimatePresence mode="popLayout">
+            {paginatedSoldData.length > 0 ? (
+              paginatedSoldData.map((fleet) => (
+                <motion.div key={fleet.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full">
+                  <FleetCard fleet={fleet} />
+                </motion.div>
+              ))
+            ) : (
+              <p className="col-span-full text-slate-500 italic">Belum ada arsip unit yang terjual.</p>
+            )}
+          </AnimatePresence>
         </motion.div>
+
+        {/* --- TAMBAHAN: UI KOMPONEN PAGINATION UNTUK UNIT TERJUAL --- */}
+        {totalSoldPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-16">
+            {/* Tombol Previous */}
+            <button
+              disabled={currentSoldPage === 1}
+              onClick={() => setCurrentSoldPage((prev) => Math.max(prev - 1, 1))}
+              className="p-3 border border-neutral-800 text-white hover:border-yellow-600 disabled:opacity-20 disabled:hover:border-neutral-800 transition-colors"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            
+            {/* Nomor Halaman */}
+            {Array.from({ length: totalSoldPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentSoldPage(page)}
+                className={`w-11 h-11 border font-bold text-xs transition-all ${
+                  currentSoldPage === page
+                    ? "bg-yellow-600 border-yellow-600 text-neutral-950"
+                    : "border-neutral-800 text-white hover:border-yellow-600"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            {/* Tombol Next */}
+            <button
+              disabled={currentSoldPage === totalSoldPages}
+              onClick={() => setCurrentSoldPage((prev) => Math.min(prev + 1, totalSoldPages))}
+              className="p-3 border border-neutral-800 text-white hover:border-yellow-600 disabled:opacity-20 disabled:hover:border-neutral-800 transition-colors"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
       
     </section>

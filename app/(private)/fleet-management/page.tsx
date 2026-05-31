@@ -13,7 +13,10 @@ import {
   SlidersHorizontal,
   RefreshCw,
   Activity,
-  X
+  X,
+  CheckCircle2,
+  XCircle,
+  DollarSign
 } from "lucide-react";
 import FleetTable from "@/components/FleetTable";
 
@@ -23,6 +26,7 @@ interface FleetItem {
   category: string;
   status: string;
   health_score: number;
+  is_sold?: boolean;
 }
 
 export default function FleetPage() {
@@ -32,7 +36,19 @@ export default function FleetPage() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [specs, setSpecs] = useState([{ key: "", value: "" }]);
+  const [specs, setSpecs] = useState([
+    { key: "", value: "" },
+    { key: "power", value: "" },
+    { key: "weight", value: "" },
+    { key: "capacity", value: "" }
+  ]);
+
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
+    show: false,
+    message: "",
+    type: "success"
+  });
+
   const [newUnit, setNewUnit] = useState<any>({ 
     id: null,
     title: "", 
@@ -44,6 +60,13 @@ export default function FleetPage() {
     image_url: "",
     specs: {}
   });
+
+  const triggerToast = (message: string, type: "success" | "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast((prev) => ({ ...prev, show: false }));
+    }, 3500);
+  };
 
   // Fungsi untuk menambah baris baru
   const addSpecRow = () => {
@@ -73,7 +96,7 @@ export default function FleetPage() {
       if (error) throw error;
       setFleet(data || []);
     } catch (error: any) {
-      console.error("Gagal memuat data armada:", error.message);
+      triggerToast("Gagal memuat data armada:", error.message);
     } finally {
       setLoading(false);
     }
@@ -83,7 +106,7 @@ export default function FleetPage() {
     fetchFleetData();
   }, []);
 
-  // Fungsi Tambah Unit ke Supabase
+  // Fungsi Tambah/Edit Unit ke Supabase
   const handleAddUnit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -97,12 +120,19 @@ export default function FleetPage() {
       }
 
       const specsObject = specs.reduce((acc, curr) => {
-        if (curr.key) acc[curr.key] = curr.value;
+        if (curr.key) {
+          // Ubah key menjadi huruf kecil semua dan hapus spasi di awal/akhir
+          const normalizedKey = curr.key.trim().toLowerCase();
+          acc[normalizedKey] = curr.value;
+        }
         return acc;
       }, {} as Record<string, string>);
+
+      const isEditing = newUnit.id !== null;
       
       const unitToSave = {
         ...newUnit,
+        is_sold: newUnit.status === "Sold",
         image_url: uploadedUrls,
         specs: specsObject
       };
@@ -117,18 +147,27 @@ export default function FleetPage() {
 
       setIsModalOpen(false);
       resetForm();
-      fetchFleetData();
+      await fetchFleetData();
+
+      triggerToast(
+        isEditing ? "Data armada berhasil diperbarui!" : "Unit armada baru berhasil ditambahkan!", 
+        "success"
+      );
     } catch (err: any) {
-      alert("Gagal menyimpan data: " + err.message);
+      triggerToast("Gagal menyimpan data: " + err.message, "error");
     } finally {
       setLoading(false);
     }
   };
 
   const handleEdit = (item: any) => {
-    const specsArray = item.specs 
+    const specsArray = item.specs && Object.keys(item.specs).length > 0
       ? Object.entries(item.specs).map(([key, value]) => ({ key, value: String(value) }))
-      : [{ key: "", value: "" }];
+      : [
+          { key: "Power", value: "" },
+          { key: "Weight", value: "" },
+          { key: "Capacity", value: "" }
+        ];
 
     setSpecs(specsArray);
 
@@ -137,7 +176,7 @@ export default function FleetPage() {
       title: item.title || "",
       category: item.category || "",
       model: item.model || "",
-      status: item.status || "Active",
+      status: item.is_sold || item.status === "Sold" ? "Sold" : (item.status || "Active"),
       health_score: item.health_score || 0,
       description: item.description || "",
       image_url: item.image_url || "",
@@ -151,13 +190,39 @@ export default function FleetPage() {
 
   const handleDelete = async (id: string | number) => {
     if (!confirm("Yakin ingin menghapus unit ini?")) return;
-    await supabase.from("fleet").delete().eq("id", id);
-    fetchFleetData();
+    setLoading(true);
+    try {
+      const { error } = await supabase.from("fleet").delete().eq("id", id);
+      if (error) throw error;
+      
+      await fetchFleetData();
+      triggerToast("Unit armada berhasil dihapus dari sistem.", "success");
+    } catch (error: any) {
+      triggerToast("Gagal menghapus unit: " + error.message, "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetForm = () => {
-    setNewUnit({ id: null, title: "", category: "", model: "", status: "Active", health_score: 100, description: "", image_url: "", specs: {} });
+    setNewUnit({ 
+      id: null, 
+      title: "", 
+      category: "", 
+      model: "", 
+      status: "Active", 
+      health_score: 100, 
+      description: "", 
+      image_url: "", 
+      specs: {} 
+    });
     setSelectedFiles([]);
+    // Reset spesifikasi ke default
+    setSpecs([
+      { key: "power", value: "" },
+      { key: "weight", value: "" },
+      { key: "capacity", value: "" }
+    ]);
   };
 
   const uploadMultipleImages = async () => {
@@ -185,6 +250,7 @@ export default function FleetPage() {
   const activeUnits = fleet.filter(f => f.status?.toLowerCase() === "active").length;
   const maintenanceUnits = fleet.filter(f => f.status?.toLowerCase() === "maintenance").length;
   const criticalUnits = fleet.filter(f => f.status?.toLowerCase() === "critical" || (f.health_score && f.health_score < 70)).length;
+  const soldUnits = fleet.filter(f => f.status?.toLowerCase() === "sold" || f.is_sold).length;
 
   // Filter & Pencarian Data
   const filteredFleet = fleet.filter((item) => {
@@ -208,6 +274,8 @@ export default function FleetPage() {
         return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
       case "critical":
         return "bg-red-500/10 text-red-400 border-red-500/20";
+      case "sold":
+        return "bg-neutral-800 text-neutral-400 border-neutral-700/60 line-through opacity-60";
       default:
         return "bg-slate-500/10 text-slate-400 border-slate-500/20";
     }
@@ -222,6 +290,18 @@ export default function FleetPage() {
 
   return (
     <div className="p-6 space-y-6">
+
+      {/* --- UI TOAST NOTIFICATION --- */}
+      {toast.show && (
+        <div className={`fixed top-5 right-5 z-[100] flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border text-sm font-bold animate-in fade-in slide-in-from-top-4 duration-300 backdrop-blur-md ${
+          toast.type === "success" 
+            ? "bg-emerald-950/90 text-emerald-400 border-emerald-500/30" 
+            : "bg-red-950/90 text-red-400 border-red-500/30"
+        }`}>
+          {toast.type === "success" ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
+          <span>{toast.message}</span>
+        </div>
+      )}
       
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -270,7 +350,7 @@ export default function FleetPage() {
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs text-slate-400 font-medium">Kategori *</label>
-                <input required placeholder="Contoh: Heavy Equipment" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                <input required placeholder="Contoh: Excavator" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
                   value={newUnit.category}
                   onChange={(e) => setNewUnit({...newUnit, category: e.target.value})} />
               </div>
@@ -292,6 +372,7 @@ export default function FleetPage() {
                   <option value="Active">Active</option>
                   <option value="Maintenance">Maintenance</option>
                   <option value="Critical">Critical</option>
+                  <option value="Sold">Sold</option>
                 </select>
               </div>
               <div className="flex flex-col gap-1.5">
@@ -310,7 +391,7 @@ export default function FleetPage() {
                   <div key={index} className="flex gap-2 items-center w-full">
                     <input 
                       placeholder="Nama: e.g. Berat" 
-                      className="flex-1 min-w-0 p-2.5 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                      className="flex-1 min-w-0 p-2.5 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors capitalize"
                       value={row.key}
                       onChange={(e) => updateSpec(index, 'key', e.target.value)}
                     />
@@ -374,16 +455,27 @@ export default function FleetPage() {
               )}
             </div>
 
-            <button type="submit" className="w-full bg-yellow-600 text-neutral-950 py-3 font-bold rounded-lg hover:bg-yellow-500 transition-colors text-sm uppercase tracking-wider mt-2">
-              Simpan Data Armada
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full bg-yellow-600 text-neutral-950 py-3 font-bold rounded-lg hover:bg-yellow-500 transition-colors text-sm uppercase tracking-wider mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <RefreshCw size={16} className="animate-spin" />
+                  <span>Menyimpan...</span>
+                </>
+              ) : (
+                "Simpan Data Armada"
+              )}
             </button>
           </form>
         </div>
       )}
 
       {/* --- KARTU RINGKASAN METRIK --- */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-neutral-900 border border-neutral-800/60 p-4 rounded-xl">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="bg-neutral-900 border border-neutral-800/60 p-4 rounded-xl  col-span-2 sm:col-span-1 md:col-span-1">
           <div className="flex justify-between items-center text-slate-400 mb-2">
             <span className="text-xs font-medium uppercase tracking-wider">Total Fleet</span>
             <Truck size={18} />
@@ -413,6 +505,14 @@ export default function FleetPage() {
             <AlertTriangle size={18} />
           </div>
           <div className="text-2xl font-bold text-red-400">{criticalUnits} <span className="text-xs text-slate-500 font-normal">Unit</span></div>
+        </div>
+
+        <div className="bg-neutral-900 border border-neutral-800/60 p-4 rounded-xl">
+          <div className="flex justify-between items-center text-blue-400 mb-2">
+            <span className="text-xs font-medium uppercase tracking-wider text-slate-400">Terjual</span>
+            <DollarSign size={18} />
+          </div>
+          <div className="text-2xl font-bold text-blue-400">{soldUnits} <span className="text-xs text-slate-500 font-normal">Unit</span></div>
         </div>
       </div>
 

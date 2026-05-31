@@ -94,7 +94,7 @@ export default function KarirPage() {
             <p className="text-slate-400 mb-8 max-w-lg mx-auto text-sm md:text-base">
               Kami selalu mencari talenta berbakat. Kirimkan CV dan profil Anda ke email kami, dan kami akan menghubungi Anda jika ada posisi yang relevan.
             </p>
-            <a href="mailto:ulunsyahroni@gmail.com" className="inline-block px-8 py-3 md:px-10 md:py-4 bg-yellow-600 text-neutral-950 font-bold uppercase tracking-widest hover:bg-white transition-all text-sm md:text-base">
+            <a href="mailto:ulunsyahroni57@gmail.com" className="inline-block px-8 py-3 md:px-10 md:py-4 bg-yellow-600 text-neutral-950 font-bold uppercase tracking-widest hover:bg-white transition-all text-sm md:text-base">
                 Kirim CV ke HR
             </a>
         </div>

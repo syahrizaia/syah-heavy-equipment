@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Trash2, Edit2, Info } from "lucide-react";
+import { Trash2, Edit2, Info, ChevronRight, ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 interface FleetTableProps {
   data: any[];
@@ -14,6 +15,24 @@ interface FleetTableProps {
 }
 
 export default function FleetTable({ data, loading, onEdit, onDelete, getStatusBadge, getHealthBarColor }: FleetTableProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+  
+  const sortedData = [...data].sort((a, b) => {
+    const idA = typeof a.id === "number" ? a.id : parseInt(a.id) || 0;
+    const idB = typeof b.id === "number" ? b.id : parseInt(b.id) || 0;
+    return idB - idA;
+  });
+
+  const totalPages = Math.ceil(sortedData.length / ITEMS_PER_PAGE);
+
+  const activePage = currentPage > totalPages && totalPages > 0 ? totalPages : currentPage;
+
+  const paginatedData = sortedData.slice(
+    (activePage - 1) * ITEMS_PER_PAGE,
+    activePage * ITEMS_PER_PAGE
+  );
+
   return (
     <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl">
       <div className="overflow-x-auto">
@@ -33,7 +52,7 @@ export default function FleetTable({ data, loading, onEdit, onDelete, getStatusB
             ) : data.length === 0 ? (
               <tr><td colSpan={5} className="py-12 text-center text-slate-500">Tidak ada data.</td></tr>
             ) : (
-              data.map((item) => (
+              paginatedData.map((item) => (
                 <tr key={item.id} className="hover:bg-neutral-800/30 transition-colors group">
                   <td className="py-4 px-6 font-bold text-slate-100">{item.title}</td>
                   <td className="py-4 px-6 text-slate-400">{item.category}</td>
@@ -67,6 +86,53 @@ export default function FleetTable({ data, loading, onEdit, onDelete, getStatusB
           </tbody>
         </table>
       </div>
+
+      {/* --- UI NAVIGASI PAGINATION TABLE --- */}
+      {!loading && totalPages > 1 && (
+        <div className="border-t border-neutral-800 bg-neutral-950/20 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Informasi Baris Data */}
+          <span className="text-xs text-slate-400">
+            Menampilkan <span className="font-bold text-white">{Math.min((activePage - 1) * ITEMS_PER_PAGE + 1, sortedData.length)}</span> sampai{" "}
+            <span className="font-bold text-white">{Math.min(activePage * ITEMS_PER_PAGE, sortedData.length)}</span> dari{" "}
+            <span className="font-bold text-white">{sortedData.length}</span> data unit
+          </span>
+
+          {/* Tombol Halaman */}
+          <div className="flex items-center gap-1">
+            <button
+              disabled={activePage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className="p-2 border border-neutral-800 bg-neutral-950 rounded text-white hover:border-yellow-600 disabled:opacity-20 disabled:hover:border-neutral-800 transition-colors"
+              title="Sebelumnya"
+            >
+              <ChevronLeft size={14} />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-8 h-8 border rounded font-bold text-xs transition-all ${
+                  activePage === page
+                    ? "bg-yellow-600 border-yellow-600 text-neutral-950"
+                    : "border-neutral-800 bg-neutral-950 text-white hover:border-yellow-600"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              disabled={activePage === totalPages}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              className="p-2 border border-neutral-800 bg-neutral-950 rounded text-white hover:border-yellow-600 disabled:opacity-20 disabled:hover:border-neutral-800 transition-colors"
+              title="Selanjutnya"
+            >
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
