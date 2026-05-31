@@ -32,13 +32,11 @@ export default function DashboardPage() {
       try {
         setLoading(true);
 
-        // 1. Ambil data armada (fleet)
         const { data: fleetData, error: fleetError } = await supabase
           .from("fleet")
           .select("status, health_score");
         if (fleetError) throw fleetError;
 
-        // 2. Ambil data proyek (projects)
         const { data: projectData, error: projectError } = await supabase
           .from("projects")
           .select("sector, status");

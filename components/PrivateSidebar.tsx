@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react"; // 1. Tambahkan useEffect di sini
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -21,13 +21,11 @@ export default function PrivateSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // 2. State untuk menampung data user secara dinamis
   const [userData, setUserData] = useState({
     fullName: "Memuat...",
     role: "Operator"
   });
 
-  // 3. Ambil data session user yang sedang aktif
   useEffect(() => {
     const fetchUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();

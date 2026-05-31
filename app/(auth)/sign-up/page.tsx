@@ -17,7 +17,7 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
+  const [, setSuccessMsg] = useState("");
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();

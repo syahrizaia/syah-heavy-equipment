@@ -12,8 +12,10 @@ import {
   Plus, 
   SlidersHorizontal,
   RefreshCw,
-  Activity
+  Activity,
+  X
 } from "lucide-react";
+import FleetTable from "@/components/FleetTable";
 
 interface FleetItem {
   id: string | number;
@@ -28,6 +30,17 @@ export default function FleetPage() {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [newUnit, setNewUnit] = useState({ 
+    title: "", 
+    category: "", 
+    model: "", 
+    status: "Active", 
+    health_score: 100, 
+    description: "",
+    image_url: ""
+  });
 
   // Fungsi mengambil data dari Supabase
   const fetchFleetData = async () => {
@@ -50,6 +63,74 @@ export default function FleetPage() {
   useEffect(() => {
     fetchFleetData();
   }, []);
+
+  // Fungsi Tambah Unit ke Supabase
+  const handleAddUnit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      let uploadedUrls = newUnit.image_url ? (Array.isArray(newUnit.image_url) ? newUnit.image_url : [newUnit.image_url]) : [];
+      
+      // Jika ada file baru yang dipilih, upload
+      if (selectedFiles.length > 0) {
+        uploadedUrls = await uploadMultipleImages();
+      }
+      
+      const unitToSave = {
+        ...newUnit,
+        image_url: uploadedUrls
+      };
+
+      // Gunakan .upsert() agar jika ada ID, dia update. Jika tidak, dia buat baru.
+      const { error } = await supabase.from("fleet").upsert([unitToSave]);
+      if (error) throw error;
+
+      setIsModalOpen(false);
+      resetForm();
+      fetchFleetData();
+    } catch (err: any) {
+      alert("Gagal menyimpan data: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (item: any) => {
+    setNewUnit(item);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id: string | number) => {
+    if (!confirm("Yakin ingin menghapus unit ini?")) return;
+    await supabase.from("fleet").delete().eq("id", id);
+    fetchFleetData();
+  };
+
+  const resetForm = () => {
+    setNewUnit({ title: "", category: "", model: "", status: "Active", health_score: 100, description: "", image_url: "" });
+    setSelectedFiles([]);
+  };
+
+  const uploadMultipleImages = async () => {
+    const imageUrls: string[] = [];
+
+    // Gunakan Promise.all agar upload berjalan paralel (lebih cepat)
+    await Promise.all(selectedFiles.map(async (file) => {
+      const fileName = `${Date.now()}_${file.name}`;
+      
+      const { error } = await supabase.storage
+        .from('fleet-images')
+        .upload(fileName, file);
+
+      if (!error) {
+        const { data } = supabase.storage.from('fleet-images').getPublicUrl(fileName);
+        imageUrls.push(data.publicUrl);
+      }
+    }));
+
+    return imageUrls;
+  };
 
   // Hitung ringkasan statistik secara dinamis
   const totalUnits = fleet.length;
@@ -108,11 +189,69 @@ export default function FleetPage() {
           >
             <RefreshCw size={18} className={loading ? "animate-spin text-yellow-600" : ""} />
           </button>
-          <button className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-yellow-600 text-neutral-950 px-4 py-2.5 rounded-lg font-bold text-sm uppercase tracking-wider transition-all hover:bg-yellow-500">
-            <Plus size={18} strokeWidth={2.5} /> Tambah Unit
+          <button 
+            onClick={() => { resetForm(); setIsModalOpen(true); }}
+            className="flex items-center gap-2 bg-yellow-600 text-neutral-950 px-4 py-2.5 rounded-lg font-bold text-sm uppercase hover:bg-yellow-500"
+          >
+            <Plus size={18} /> Tambah Unit
           </button>
         </div>
       </div>
+
+      {/* --- MODAL TAMBAH UNIT --- */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <form onSubmit={handleAddUnit} className="bg-neutral-900 border border-neutral-800 p-6 rounded-xl w-full max-w-lg space-y-4 my-8">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-xl font-bold text-white">Tambah Unit Armada</h2>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white"><X size={20}/></button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <input required placeholder="Nama Unit" className="p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
+                onChange={(e) => setNewUnit({...newUnit, title: e.target.value})} />
+              <input required placeholder="Kategori" className="p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
+                onChange={(e) => setNewUnit({...newUnit, category: e.target.value})} />
+            </div>
+
+            <input placeholder="Model" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
+              onChange={(e) => setNewUnit({...newUnit, model: e.target.value})} />
+
+            <div className="grid grid-cols-2 gap-4">
+              <select className="p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
+                onChange={(e) => setNewUnit({...newUnit, status: e.target.value})}>
+                <option value="Active">Active</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Critical">Critical</option>
+              </select>
+              <input type="number" placeholder="Health Score (0-100)" className="p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
+                onChange={(e) => setNewUnit({...newUnit, health_score: parseInt(e.target.value)})} />
+            </div>
+
+            <textarea placeholder="Deskripsi Unit..." className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm h-24"
+              onChange={(e) => setNewUnit({...newUnit, description: e.target.value})} />
+
+            <div className="space-y-2 flex flex-col md:flex-row gap-2 md:gap-4">
+              <label className="text-xs text-slate-400">Pilih Foto Unit:</label>
+              <input 
+                type="file" 
+                multiple
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    setSelectedFiles(Array.from(e.target.files)); // Simpan sebagai array
+                  }
+                }}
+                className="..." 
+              />
+            </div>
+
+            <button type="submit" className="w-full bg-yellow-600 text-neutral-950 py-3 font-bold rounded hover:bg-yellow-500 transition-colors">
+              Simpan Data Armada
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* --- KARTU RINGKASAN METRIK --- */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -174,80 +313,21 @@ export default function FleetPage() {
               <option value="Active" className="bg-neutral-950">Active</option>
               <option value="Maintenance" className="bg-neutral-950">Maintenance</option>
               <option value="Critical" className="bg-neutral-950">Critical</option>
+              <option value="Sold" className="bg-neutral-900">Sold</option>
             </select>
           </div>
         </div>
       </div>
 
       {/* --- TABEL DATA ARMADA --- */}
-      <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-neutral-800 bg-neutral-950/40 text-xs font-bold uppercase tracking-wider text-slate-400">
-                <th className="py-4 px-6">Nama Unit</th>
-                <th className="py-4 px-6">Kategori / Tipe</th>
-                <th className="py-4 px-6">Status</th>
-                <th className="py-4 px-6 w-64">Skor Kesehatan</th>
-                <th className="py-4 px-6 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-800/50 text-sm">
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-500">
-                    <div className="flex items-center justify-center gap-2">
-                      <RefreshCw size={16} className="animate-spin text-yellow-600" />
-                      Memproses sinkronisasi data Supabase...
-                    </div>
-                  </td>
-                </tr>
-              ) : filteredFleet.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-500">
-                    Tidak ada armada yang cocok dengan kriteria pencarian.
-                  </td>
-                </tr>
-              ) : (
-                filteredFleet.map((item) => (
-                  <tr key={item.id} className="hover:bg-neutral-800/30 transition-colors group">
-                    <td className="py-4 px-6 font-bold text-slate-100 group-hover:text-yellow-600 transition-colors">
-                      {item.title}
-                    </td>
-                    <td className="py-4 px-6 text-slate-400">
-                      {item.category || "Heavy Equipment"}
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className={`px-2.5 py-1 text-xs font-bold tracking-wide rounded-full border ${getStatusBadge(item.status)}`}>
-                        {item.status || "Unknown"}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs font-medium">
-                          <span className="text-slate-500">Health Index</span>
-                          <span className="font-bold">{item.health_score ?? 0}%</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-neutral-950 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full rounded-full transition-all duration-500 ${getHealthBarColor(item.health_score ?? 0)}`}
-                            style={{ width: `${item.health_score ?? 0}%` }}
-                          />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <button className="text-xs font-bold text-yellow-600 hover:text-white bg-yellow-600/5 hover:bg-yellow-600 border border-yellow-600/20 px-3 py-1.5 rounded-md transition-all">
-                        Detail
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <FleetTable
+        data={filteredFleet} 
+        loading={loading} 
+        onEdit={handleEdit} 
+        onDelete={handleDelete}
+        getStatusBadge={getStatusBadge}
+        getHealthBarColor={getHealthBarColor}
+      />
 
     </div>
   );

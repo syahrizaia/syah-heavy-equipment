@@ -39,7 +39,7 @@ export default function ProjectsPage() {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from("projects") // Pastikan nama tabel di Supabase adalah 'projects'
+        .from("projects")
         .select("id, name, location, status, progress, start_date, end_date, budget")
         .order("created_at", { ascending: false });
 

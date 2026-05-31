@@ -1,12 +1,14 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
+  const router = useRouter();
+
   return (
-    <main className="min-h-screen bg-neutral-950 flex flex-col items-center justify-center px-6 text-center">
+    <main className="min-h-screen bg-neutral-950 flex flex-col items-center justify-center px-6 text-center text-white">
       
       {/* Visual Error */}
       <motion.div 
@@ -30,14 +32,14 @@ export default function NotFound() {
         Sinyal tidak ditemukan di lokasi ini. Jalur yang Anda tuju mungkin sudah dipindahkan atau sedang dalam perbaikan teknis.
       </p>
 
-      {/* Aksi */}
-      <Link 
-        href="/" 
-        className="group flex items-center gap-3 bg-neutral-900 border border-neutral-700 hover:border-yellow-600 px-8 py-4 text-white font-bold uppercase tracking-widest transition-all"
+      {/* Aksi - Diubah dari Link menjadi Button dengan aksi router.back() */}
+      <button 
+        onClick={() => router.back()}
+        className="group flex items-center gap-3 bg-neutral-900 border border-neutral-700 hover:border-yellow-600 px-8 py-4 text-white font-bold uppercase tracking-widest transition-all cursor-pointer rounded-lg"
       >
         <ArrowLeft size={20} className="group-hover:-translate-x-2 transition-transform" />
         Kembali ke Lokasi Aman
-      </Link>
+      </button>
     </main>
   );
 }

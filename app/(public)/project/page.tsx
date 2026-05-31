@@ -2,7 +2,6 @@ import { supabase } from "@/lib/supabase";
 import ProjectList from "@/components/ProjectList";
 
 export default async function ProyekPage() {
-  // Fetch data dari database
   const { data: projects, error } = await supabase.from("projects").select("*");
 
   if (error) {
@@ -15,16 +14,11 @@ export default async function ProyekPage() {
   }
 
   return (
-    /* - pt-20 & pb-16: Mengurangi ruang kosong berlebih di atas/bawah pada mobile.
-       - px-4 md:px-6: Padding samping yang lebih aman untuk layar kecil.
-       - w-full overflow-x-hidden: Mencegah halaman bergeser ke samping.
-    */
     <main className="min-h-screen bg-neutral-950 pt-24 pb-16 px-4 md:px-6 w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto mb-12">
         <h2 className="text-yellow-600 font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-xs md:text-sm">
           Portfolio Utama
         </h2>
-        {/* Menggunakan text-4xl di mobile agar tidak memotong layar, 7xl di desktop */}
         <h1 className="text-4xl md:text-7xl font-bold font-barlow text-white uppercase mt-2">
           Rekam Jejak
         </h1>

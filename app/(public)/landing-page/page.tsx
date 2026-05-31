@@ -33,7 +33,7 @@ export default async function LandingPage() {
             Membangun Masa Depan
           </h2>
           <h1 className="text-5xl md:text-9xl font-bold font-barlow leading-[0.9] mb-8">
-            SYAH <br/><span className="stroke-white">EQUIPMENT</span>
+            SYAH <br/><span className="stroke-white">HEAVY EQUIPMENT</span>
           </h1>
           <p className="max-w-lg text-slate-400 text-base md:text-lg mb-10 leading-relaxed">
             Solusi alat berat terintegrasi dengan teknologi IoT untuk efisiensi operasional maksimal.

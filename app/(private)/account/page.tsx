@@ -29,7 +29,7 @@ export default function SettingsPage() {
   const [avatarUrl, setAvatarUrl] = useState("");
 
   // State untuk Keamanan (Password)
-  const [currentPassword, setCurrentPassword] = useState("");
+  const [, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -145,10 +145,10 @@ export default function SettingsPage() {
           <Link href="/account" className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-neutral-900 text-yellow-500 border border-neutral-800 font-medium text-sm transition-all">
             <User size={18} /> Informasi Profil
           </Link>
-          <Link href="/account/security" className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-neutral-900/50 hover:text-slate-200 font-medium text-sm transition-all">
+          <Link href="/account#security" className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-neutral-900/50 hover:text-slate-200 font-medium text-sm transition-all">
             <Lock size={18} /> Keamanan & Sandi
           </Link>
-          <Link href="/account/notifications" className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-neutral-900/50 hover:text-slate-200 font-medium text-sm transition-all">
+          <Link href="/account#notifications" className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-neutral-900/50 hover:text-slate-200 font-medium text-sm transition-all">
             <Bell size={18} /> Notifikasi Sistem
           </Link>
         </div>

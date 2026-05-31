@@ -70,7 +70,7 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="max-w-7xl mx-auto border-t border-neutral-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs uppercase tracking-widest">
-        <p className="text-center md:text-left">© {new Date().getFullYear()} Syah Heavy Equipment. All rights reserved.</p>
+        <p className="text-center md:text-left">© {new Date().getFullYear()} <span className="text-yellow-600">Syah Heavy Equipment</span>. All rights reserved.</p>
         <div className="flex gap-6">
           <FaLinkedin size={18} className="hover:text-yellow-600 cursor-pointer transition-colors" />
           <FaInstagram size={18} className="hover:text-yellow-600 cursor-pointer transition-colors" />

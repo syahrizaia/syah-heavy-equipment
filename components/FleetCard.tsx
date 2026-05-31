@@ -6,6 +6,14 @@ import { ArrowRight, Weight, Gauge, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function FleetCard({ fleet }: { fleet: any }) {
+  const getFirstImage = () => {
+    const images = Array.isArray(fleet.image_url) ? fleet.image_url : [fleet.image_url];
+    const firstUrl = images[0] || "/placeholder.jpg";
+    
+    // Sanitasi URL agar tetap konsisten dengan perbaikan sebelumnya
+    return firstUrl.startsWith("http") ? firstUrl : `/${firstUrl.replace(/^\//, '')}`;
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 50 }}
@@ -19,7 +27,7 @@ export default function FleetCard({ fleet }: { fleet: any }) {
       <div className="mb-6 h-48 bg-neutral-950 rounded-lg flex items-center justify-center overflow-hidden">
         <motion.img 
           whileHover={{ scale: 1.1 }}
-          src={fleet.image_url} 
+          src={getFirstImage()} 
           alt={fleet.title} 
           className="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity"
         />

@@ -19,12 +19,6 @@ export default function ProjectList({ projects }: { projects: any[] }) {
   return (
     <div className="max-w-7xl mx-auto">
       {/* Filter - Sekarang Horizontal Scroll */}
-      {/* 
-        flex-nowrap: Mencegah tombol turun ke bawah
-        overflow-x-auto: Mengaktifkan scroll horizontal
-        [&::-webkit-scrollbar]:hidden: Menyembunyikan scrollbar (khusus Chrome/Safari/Edge)
-        pb-4: Memberikan ruang agar scrollbar tidak menempel pada konten
-      */}
       <div className="flex gap-4 mb-12 flex-nowrap overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden">
         {SECTORS.map((sector) => (
           <button
