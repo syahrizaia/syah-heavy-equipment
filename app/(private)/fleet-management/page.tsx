@@ -32,15 +32,34 @@ export default function FleetPage() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [newUnit, setNewUnit] = useState({ 
+  const [specs, setSpecs] = useState([{ key: "", value: "" }]);
+  const [newUnit, setNewUnit] = useState<any>({ 
+    id: null,
     title: "", 
     category: "", 
     model: "", 
     status: "Active", 
     health_score: 100, 
     description: "",
-    image_url: ""
+    image_url: "",
+    specs: {}
   });
+
+  // Fungsi untuk menambah baris baru
+  const addSpecRow = () => {
+    setSpecs([...specs, { key: "", value: "" }]);
+  };
+
+  const removeSpecRow = (index: number) => {
+    setSpecs(specs.filter((_, i) => i !== index));
+  };
+
+  // Fungsi untuk mengupdate input spesifikasi
+  const updateSpec = (index: number, field: 'key' | 'value', val: string) => {
+    const newSpecs = [...specs];
+    newSpecs[index][field] = val;
+    setSpecs(newSpecs);
+  };
 
   // Fungsi mengambil data dari Supabase
   const fetchFleetData = async () => {
@@ -48,7 +67,7 @@ export default function FleetPage() {
     try {
       const { data, error } = await supabase
         .from("fleet")
-        .select("id, title, category, status, health_score")
+        .select("id, title, category, status, health_score, model, description, image_url, specs")
         .order("title", { ascending: true });
 
       if (error) throw error;
@@ -76,10 +95,16 @@ export default function FleetPage() {
       if (selectedFiles.length > 0) {
         uploadedUrls = await uploadMultipleImages();
       }
+
+      const specsObject = specs.reduce((acc, curr) => {
+        if (curr.key) acc[curr.key] = curr.value;
+        return acc;
+      }, {} as Record<string, string>);
       
       const unitToSave = {
         ...newUnit,
-        image_url: uploadedUrls
+        image_url: uploadedUrls,
+        specs: specsObject
       };
 
       // Gunakan .upsert() agar jika ada ID, dia update. Jika tidak, dia buat baru.
@@ -97,7 +122,26 @@ export default function FleetPage() {
   };
 
   const handleEdit = (item: any) => {
-    setNewUnit(item);
+    const specsArray = item.specs 
+      ? Object.entries(item.specs).map(([key, value]) => ({ key, value: String(value) }))
+      : [{ key: "", value: "" }];
+
+    setSpecs(specsArray);
+
+    setNewUnit({
+      id: item.id || null,
+      title: item.title || "",
+      category: item.category || "",
+      model: item.model || "",
+      status: item.status || "Active",
+      health_score: item.health_score || 0,
+      description: item.description || "",
+      image_url: item.image_url || "",
+      specs: item.specs || {}
+    });
+    
+    setNewUnit((prev: any) => ({ ...prev, id: item.id })); 
+    
     setIsModalOpen(true);
   };
 
@@ -108,7 +152,7 @@ export default function FleetPage() {
   };
 
   const resetForm = () => {
-    setNewUnit({ title: "", category: "", model: "", status: "Active", health_score: 100, description: "", image_url: "" });
+    setNewUnit({ id: null, title: "", category: "", model: "", status: "Active", health_score: 100, description: "", image_url: "", specs: {} });
     setSelectedFiles([]);
   };
 
@@ -200,53 +244,133 @@ export default function FleetPage() {
 
       {/* --- MODAL TAMBAH UNIT --- */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <form onSubmit={handleAddUnit} className="bg-neutral-900 border border-neutral-800 p-6 rounded-xl w-full max-w-lg space-y-4 my-8">
+        // Mengubah items-center menjadi items-start agar scrollable dari titik paling atas
+        <div className="fixed inset-0 bg-black/80 flex justify-center items-start z-50 p-4 overflow-y-auto">
+          {/* Menggunakan my-auto agar otomatis centering jika muat, dan beralih ke margin normal jika overflow */}
+          <form onSubmit={handleAddUnit} className="bg-neutral-900 border border-neutral-800 p-5 sm:p-6 rounded-xl w-full max-w-lg space-y-4 my-auto sm:my-8">
             <div className="flex justify-between items-center mb-2">
-              <h2 className="text-xl font-bold text-white">Tambah Unit Armada</h2>
-              <button type="button" onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white"><X size={20}/></button>
+              <h2 className="text-xl font-bold text-white">
+                {newUnit.id ? "Edit Unit Armada" : "Tambah Unit Armada"}
+              </h2>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-neutral-800 transition-colors">
+                <X size={20}/>
+              </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <input required placeholder="Nama Unit" className="p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
-                onChange={(e) => setNewUnit({...newUnit, title: e.target.value})} />
-              <input required placeholder="Kategori" className="p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
-                onChange={(e) => setNewUnit({...newUnit, category: e.target.value})} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-slate-400 font-medium">Nama Unit *</label>
+                <input required placeholder="Contoh: Excavator PC200" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                  value={newUnit.title}
+                  onChange={(e) => setNewUnit({...newUnit, title: e.target.value})} />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-slate-400 font-medium">Kategori *</label>
+                <input required placeholder="Contoh: Heavy Equipment" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                  value={newUnit.category}
+                  onChange={(e) => setNewUnit({...newUnit, category: e.target.value})} />
+              </div>
             </div>
 
-            <input placeholder="Model" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
-              onChange={(e) => setNewUnit({...newUnit, model: e.target.value})} />
-
-            <div className="grid grid-cols-2 gap-4">
-              <select className="p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
-                onChange={(e) => setNewUnit({...newUnit, status: e.target.value})}>
-                <option value="Active">Active</option>
-                <option value="Maintenance">Maintenance</option>
-                <option value="Critical">Critical</option>
-              </select>
-              <input type="number" placeholder="Health Score (0-100)" className="p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm"
-                onChange={(e) => setNewUnit({...newUnit, health_score: parseInt(e.target.value)})} />
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-slate-400 font-medium">Model *</label>
+              <input placeholder="Contoh: CAT 320D" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                value={newUnit.model}
+                onChange={(e) => setNewUnit({...newUnit, model: e.target.value})} />
             </div>
 
-            <textarea placeholder="Deskripsi Unit..." className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm h-24"
-              onChange={(e) => setNewUnit({...newUnit, description: e.target.value})} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-slate-400 font-medium">Status Operasional</label>
+                <select className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors cursor-pointer"
+                  value={newUnit.status}
+                  onChange={(e) => setNewUnit({...newUnit, status: e.target.value})}>
+                  <option value="Active">Active</option>
+                  <option value="Maintenance">Maintenance</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-slate-400 font-medium">Health Score (0-100)</label>
+                <input type="number" min="0" max="100" placeholder="100" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                  value={newUnit.health_score}
+                  onChange={(e) => setNewUnit({...newUnit, health_score: parseInt(e.target.value) || 0})} />
+              </div>
+            </div>
 
-            <div className="space-y-2 flex flex-col md:flex-row gap-2 md:gap-4">
-              <label className="text-xs text-slate-400">Pilih Foto Unit:</label>
+            {/* Antarmuka Spesifikasi Dibuat Lebih Responsif dengan min-w-0 agar tidak merusak layout HP */}
+            <div className="space-y-3 pt-2">
+              <label className="text-sm font-bold text-white block">Spesifikasi Alat</label>
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                {specs.map((row, index) => (
+                  <div key={index} className="flex gap-2 items-center w-full">
+                    <input 
+                      placeholder="Nama: e.g. Berat" 
+                      className="flex-1 min-w-0 p-2.5 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                      value={row.key}
+                      onChange={(e) => updateSpec(index, 'key', e.target.value)}
+                    />
+                    <input 
+                      placeholder="Nilai: e.g. 20 Ton" 
+                      className="flex-1 min-w-0 p-2.5 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                      value={row.value}
+                      onChange={(e) => updateSpec(index, 'value', e.target.value)}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => removeSpecRow(index)}
+                      className="p-2.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors flex-shrink-0"
+                      title="Hapus"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <button 
+                type="button" 
+                onClick={addSpecRow}
+                className="text-xs text-yellow-600 hover:text-yellow-500 font-bold inline-flex items-center gap-1 mt-1 transition-colors"
+              >
+                + Tambah Spesifikasi
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-slate-400 font-medium">Deskripsi</label>
+              <textarea placeholder="Deskripsi kondisi unit, riwayat penggunaan, dll..." className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm h-24 resize-none focus:outline-none focus:border-yellow-600/50 transition-colors"
+                value={newUnit.description}
+                onChange={(e) => setNewUnit({...newUnit, description: e.target.value})} />
+            </div>
+            
+            {newUnit.image_url && !selectedFiles.length && (
+              <div className="text-xs text-yellow-600 bg-yellow-600/5 border border-yellow-600/20 p-2 rounded">
+                💡 Gambar lama sudah terpasang. Unggah file baru untuk menggantinya.
+              </div>
+            )}
+
+            <div className="space-y-2 flex flex-col gap-2">
+              <label className="text-xs font-medium text-slate-400">Foto Unit</label>
               <input 
                 type="file" 
                 multiple
                 accept="image/*"
                 onChange={(e) => {
                   if (e.target.files) {
-                    setSelectedFiles(Array.from(e.target.files)); // Simpan sebagai array
+                    setSelectedFiles(Array.from(e.target.files));
                   }
                 }}
-                className="..." 
+                className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-bold file:rounded file:bg-neutral-800 file:text-white hover:file:bg-neutral-700 file:cursor-pointer" 
               />
+              {newUnit.image_url && (
+                <div className="text-xs text-slate-500">
+                  File saat ini: {Array.isArray(newUnit.image_url) ? newUnit.image_url.length : 1} foto terhubung.
+                </div>
+              )}
             </div>
 
-            <button type="submit" className="w-full bg-yellow-600 text-neutral-950 py-3 font-bold rounded hover:bg-yellow-500 transition-colors">
+            <button type="submit" className="w-full bg-yellow-600 text-neutral-950 py-3 font-bold rounded-lg hover:bg-yellow-500 transition-colors text-sm uppercase tracking-wider mt-2">
               Simpan Data Armada
             </button>
           </form>

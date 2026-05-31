@@ -67,7 +67,7 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
       {/* --- SECTION: ARSIP UNIT TERJUAL --- */}
       <div className="pt-12 border-t border-neutral-800">
         <h3 className="text-2xl md:text-3xl font-bold font-barlow text-white uppercase mb-8">
-          Arsip Unit Terjual
+          Arsip Armada Terjual
         </h3>
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 opacity-80 grayscale">
           {soldData.map((fleet) => (

@@ -40,7 +40,7 @@ export default function FleetDetailContent({ fleet }: { fleet: any }) {
 
   const images = rawImages.map(sanitizeUrl);
 
-  const whatsappNumber = "6282114487163"; 
+  const whatsappNumber = "6281228134488"; 
 
   const message = fleet.is_sold 
     ? `Halo, saya melihat unit "${fleet.title}" telah terjual. Apakah ada unit lain yang serupa atau ketersediaan stok baru untuk model ini? Terima kasih.`
