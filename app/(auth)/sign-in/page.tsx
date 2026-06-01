@@ -48,7 +48,7 @@ export default function SignInPage() {
         {/* Header Kartu */}
         <div className="text-center mb-8">
           <span className="text-yellow-600 font-bold tracking-[0.2em] uppercase text-xs">
-            Syah Equipment Control Center
+            SHE Control Center
           </span>
           <h1 className="text-3xl md:text-4xl font-bold font-barlow uppercase mt-2">
             Selamat Datang

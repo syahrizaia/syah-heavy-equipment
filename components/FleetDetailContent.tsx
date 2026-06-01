@@ -26,7 +26,7 @@ export default function FleetDetailContent({ fleet }: { fleet: any }) {
   const handleShare = async () => {
     const shareData = {
       title: fleet.title || "Detail Unit Armada",
-      text: `Cek unit ${fleet.title} (${fleet.model || ""}) di katalog armada kami.`,
+      text: `Cek unit ${fleet.title} (${fleet.model || ""}) di katalog armada kami, Syah Heavy Equipment.`,
       url: typeof window !== "undefined" ? window.location.href : "",
     };
 

@@ -13,7 +13,8 @@ import {
   LogOut, 
   Menu, 
   X, 
-  User 
+  User, 
+  Wrench
 } from "lucide-react";
 
 export default function PrivateSidebar() {
@@ -75,6 +76,7 @@ export default function PrivateSidebar() {
   const menuItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Manajemen Armada", href: "/fleet-management", icon: Truck },
+    { name: "Manajemen Suku Cadang", href: "/spare-part-management", icon: Wrench },
     { name: "Proyek Situs", href: "/site-project", icon: Briefcase },
     { name: "Pengaturan Akun", href: "/account", icon: User },
   ];
@@ -84,7 +86,7 @@ export default function PrivateSidebar() {
       {/* --- NAVBAR ATAS (HANYA MUNCUL DI MOBILE) --- */}
       <header className="md:hidden w-full h-16 bg-neutral-900 border-b border-neutral-800 fixed top-0 left-0 z-50 px-4 flex items-center justify-between">
         <span className="font-bold tracking-wider text-yellow-600 font-barlow uppercase text-sm">
-          Syah Control Center
+          SHE Control Center
         </span>
         <button 
           onClick={() => setIsOpen(!isOpen)}
@@ -104,7 +106,7 @@ export default function PrivateSidebar() {
         <div className="space-y-8">
           {/* Logo Brand (Hanya Terlihat di Desktop) */}
           <div className="hidden md:block text-yellow-600 font-bold tracking-[0.1em] uppercase text-sm border-b border-neutral-800 pb-4">
-            Syah Equipment Control
+            SHE Control Center
           </div>
           
           {/* Menu Navigasi Dinamis */}

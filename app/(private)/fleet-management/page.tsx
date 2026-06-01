@@ -306,7 +306,7 @@ export default function FleetPage() {
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Manajemen Fleet</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Manajemen Armada</h1>
           <p className="text-sm text-slate-400">Pantau kondisi operasional dan kesehatan alat berat.</p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">

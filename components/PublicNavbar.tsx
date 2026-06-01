@@ -9,9 +9,10 @@ import Image from "next/image";
 const links = [
   { label: "Beranda", href: "/" },
   { label: "Armada", href: "/fleet" },
+  { label: "Suku Cadang", href: "/spare-part" },
   { label: "Layanan", href: "/service" },
   { label: "Teknologi", href: "/technology" },
-  { label: "Proyek", href: "/project" },
+  // { label: "Proyek", href: "/project" },
 ];
 
 export default function PublicNavbar() {
@@ -73,7 +74,7 @@ export default function PublicNavbar() {
                     key={link.label}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-white font-bold uppercase flex justify-between items-center py-4 px-2 border-b border-neutral-900"
+                    className="text-white text-sm font-bold uppercase tracking-wider flex justify-between items-center py-2.5 px-2 border-b border-neutral-900/60 active:bg-neutral-900/40 transition-colors"
                 >
                   {link.label} <ChevronRight size={16} />
                 </Link>
@@ -82,7 +83,7 @@ export default function PublicNavbar() {
               <Link
                 href="/contact"
                 onClick={() => setIsOpen(false)}
-                className="text-yellow-600 font-bold uppercase flex justify-between items-center py-4 px-2 border-b border-neutral-900"
+                className="text-yellow-600 text-sm font-bold uppercase tracking-wider flex justify-between items-center py-2.5 px-2 border-b border-neutral-900/60 active:bg-neutral-900/40 transition-colors"
               >
                 Hubungi Kami <ChevronRight size={16} />
               </Link>
