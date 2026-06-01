@@ -109,12 +109,14 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 py-12 space-y-6">
       
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Proyek Situs</h1>
+          <h1 className="text-3xl font-bold font-barlow uppercase tracking-tight flex items-center gap-2">
+            <Briefcase className="text-yellow-600" size={24} /> Proyek Situs
+          </h1>
           <p className="text-sm text-slate-400">Kelola lokasi penugasan alat berat dan lini masa proyek.</p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
@@ -125,7 +127,7 @@ export default function ProjectsPage() {
           >
             <RefreshCw size={18} className={loading ? "animate-spin text-yellow-600" : ""} />
           </button>
-          <button className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-yellow-600 text-neutral-950 px-4 py-2.5 rounded-lg font-bold text-sm uppercase tracking-wider transition-all hover:bg-yellow-500">
+          <button className="flex items-center gap-2 bg-yellow-600 text-neutral-950 px-4 py-2.5 rounded-lg font-bold text-sm uppercase hover:bg-yellow-500">
             <Plus size={18} strokeWidth={2.5} /> Proyek Baru
           </button>
         </div>

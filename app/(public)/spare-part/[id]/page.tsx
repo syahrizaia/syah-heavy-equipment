@@ -1,20 +1,57 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ShoppingCart, Wrench, Settings, Package, Truck, CheckCircle2, AlertCircle, Share2 } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Wrench, Settings, Package, Truck, CheckCircle2, AlertCircle, Share2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { MOCK_PARTS } from "../page";
 import { useParams } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function PartDetailContent() {
   const params = useParams();
   const id = params?.id;
-  const part = MOCK_PARTS.find((item) => item.id === id) || MOCK_PARTS[0];
+  const [part, setPart] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [shareCopied, setShareCopied] = useState(false);
+  const [activeImgIndex, setActiveImgIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const WHATSAPP_NUMBER = "6281228134488";
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchPartDetail = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("spare_parts")
+          .select("*")
+          .eq("id", id)
+          .single(); // Mengambil satu objek data saja sesuai ID
+
+        if (error) throw error;
+        setPart(data);
+      } catch (error: any) {
+        console.error("Gagal mengambil detail suku cadang:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPartDetail();
+  }, [id]);
+
+  const formatIDR = (num: number) => {
+    if (!num) return "Rp0";
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0
+    }).format(num);
+  };
 
   // Handler untuk mengatur jumlah barang
   const handleDecrease = () => setQuantity((prev) => Math.max(1, prev - 1));
@@ -72,8 +109,54 @@ export default function PartDetailContent() {
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   };
 
-  // Jika data tidak ditemukan, tampilkan pesan error yang aman
-  if (!part) return <div className="min-h-screen flex items-center justify-center text-white bg-neutral-950">Data Suku Cadang Tidak Ditemukan.</div>;
+  const imageList = Array.isArray(part?.image)
+    ? part.image.filter((img: string) => img && img.trim() !== "")
+    : part?.image ? [part.image] : ["https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600"];
+
+  if (imageList.length === 0) imageList.push("https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600");
+
+  const scrollToImage = (index: number) => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const width = container.clientWidth;
+      container.scrollTo({
+        left: width * index,
+        behavior: "smooth"
+      });
+      setActiveImgIndex(index);
+    }
+  };
+
+  const handleScrollDetect = () => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const index = Math.round(container.scrollLeft / container.clientWidth);
+      if (index !== activeImgIndex) {
+        setActiveImgIndex(index);
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center text-slate-400 bg-neutral-950 gap-3">
+        <Loader2 className="animate-spin text-yellow-600" size={36} />
+        <span className="text-sm tracking-widest font-medium">Memuat detail produk...</span>
+      </div>
+    );
+  }
+
+  // Jika loading selesai tapi data tidak ditemukan
+  if (!part) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center text-white bg-neutral-950 gap-4">
+        <div className="text-slate-500 italic">Data Suku Cadang Tidak Ditemukan atau Terhapus.</div>
+        <Link href="/spare-part" className="text-xs font-bold uppercase tracking-wider px-4 py-2 bg-neutral-900 border border-neutral-800 rounded-lg text-yellow-600 hover:text-white transition-colors">
+          Kembali ke Katalog
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-neutral-950 text-white pt-24 pb-16 px-4 md:px-6 w-full overflow-x-hidden">
@@ -92,22 +175,68 @@ export default function PartDetailContent() {
             animate={{ opacity: 1, x: 0 }} 
             className="space-y-4"
           >
+            {/* Box Frame Utama */}
             <div className="relative w-full aspect-square md:aspect-[4/3] lg:aspect-square bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden group">
-              <Image
-                  src={part.image || "/placeholder.jpg"}
-                  alt={part.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  sizes="(max-width: 768px) 100vw, 800px"
-                  priority
-              />
+              
+              {/* Container Scroll Snap Track */}
+              <div 
+                ref={scrollContainerRef}
+                onScroll={handleScrollDetect}
+                className="w-full h-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth style-scrollbar-hide"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {imageList.map((imgUrl: string, idx: number) => (
+                  <div key={idx} className="w-full h-full shrink-0 snap-center relative">
+                    <Image
+                      src={imgUrl}
+                      alt={`${part.name} - Tampilan ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 800px"
+                      priority={idx === 0}
+                    />
+                  </div>
+                ))}
+              </div>
+
               {/* Badge Kategori */}
-              <div className="absolute top-4 left-4">
+              <div className="absolute top-4 left-4 z-10">
                 <span className="bg-neutral-900/80 backdrop-blur-md text-slate-200 border border-neutral-700/50 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-md">
                   {part.category}
                 </span>
               </div>
+
+              {/* Petunjuk Geser / Swipe Hint (Hanya muncul jika gambar > 1) */}
+              {imageList.length > 1 && (
+                <div className="absolute bottom-4 right-4 bg-neutral-900/80 backdrop-blur-md text-yellow-600 border border-neutral-800 text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-lg z-10 pointer-events-none animate-pulse">
+                  Geser Foto ({activeImgIndex + 1}/{imageList.length}) →
+                </div>
+              )}
             </div>
+
+            {/* Kontrol Strip Thumbnail Bawah (Hanya tampil jika multi-foto) */}
+            {imageList.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-1 custom-scrollbar-thin">
+                {imageList.map((imgUrl: string, idx: number) => (
+                  <button
+                    key={idx}
+                    onClick={() => scrollToImage(idx)}
+                    className={`relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-neutral-900 border transition-all ${
+                      activeImgIndex === idx 
+                        ? "border-yellow-600 ring-2 ring-yellow-600/20 opacity-100" 
+                        : "border-neutral-800 opacity-40 hover:opacity-80"
+                    }`}
+                  >
+                    <Image
+                      src={imgUrl}
+                      alt={`Thumbnail ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* KOLOM KANAN: Detail Informasi */}
@@ -135,7 +264,7 @@ export default function PartDetailContent() {
               </h1>
               
               <div className="text-3xl font-black text-white mb-6">
-                {part?.price}
+                {formatIDR(part?.price)}
               </div>
 
               <p className="text-slate-400 leading-relaxed text-sm md:text-base mb-8">

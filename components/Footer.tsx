@@ -32,9 +32,9 @@ export default function Footer() {
           <ul className="space-y-3 text-xs md:text-sm">
             <li><Link href="/" className="hover:text-yellow-600 transition-colors">Beranda</Link></li>
             <li><Link href="/fleet" className="hover:text-yellow-600 transition-colors">Armada</Link></li>
+            <li><Link href="/spare-part" className="hover:text-yellow-600 transition-colors">Suku Cadang</Link></li>
             <li><Link href="/service" className="hover:text-yellow-600 transition-colors">Layanan</Link></li>
             <li><Link href="/technology" className="hover:text-yellow-600 transition-colors">Teknologi</Link></li>
-            <li><Link href="/project" className="hover:text-yellow-600 transition-colors">Proyek</Link></li>
           </ul>
         </div>
 
@@ -42,8 +42,9 @@ export default function Footer() {
         <div className="col-span-1">
           <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs md:text-sm">Dukungan</h4>
           <ul className="space-y-3 text-xs md:text-sm">
-            <li><Link href="/contact" className="hover:text-yellow-600 transition-colors">Pusat Bantuan</Link></li>
+            <li><Link href="/project" className="hover:text-yellow-600 transition-colors">Proyek</Link></li>
             <li><Link href="/careers" className="hover:text-yellow-600 transition-colors">Karir</Link></li>
+            <li><Link href="/contact" className="hover:text-yellow-600 transition-colors">Pusat Bantuan</Link></li>
             <li><Link href="/privacy" className="hover:text-yellow-600 transition-colors">Kebijakan Privasi</Link></li>
           </ul>
         </div>

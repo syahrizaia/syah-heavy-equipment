@@ -11,7 +11,11 @@ import {
   TrendingUp, 
   Layers,
   Wrench,
-  Clock
+  Clock,
+  Gauge,
+  Package,
+  DollarSign,
+  ShieldAlert
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -24,8 +28,22 @@ export default function DashboardPage() {
     miningProjects: 0,
     infraProjects: 0,
     oilGasProjects: 0,
-    criticalAlerts: 0
+    criticalAlerts: 0,
+    avgHealthScore: 0,
+    totalBudget: 0,
+    avgProjectProgress: 0,
+    totalPartsSKU: 0,
+    outOfStockParts: 0,
+    totalPartsValue: 0
   });
+
+  const formatIDR = (num: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0
+    }).format(num);
+  };
 
   useEffect(() => {
     async function getDashboardStats() {
@@ -39,12 +57,18 @@ export default function DashboardPage() {
 
         const { data: projectData, error: projectError } = await supabase
           .from("projects")
-          .select("sector, status");
+          .select("sector, status, budget, progress");
         if (projectError) throw projectError;
+
+        const { data: partsData, error: partsError } = await supabase
+          .from("spare_parts")
+          .select("price, stock");
+        if (partsError) throw partsError;
 
         // Kumpulan perhitungan statistik dari basis data
         const fleet = fleetData || [];
         const projects = projectData || [];
+        const parts = partsData || [];
 
         const activeF = fleet.filter(f => f.status?.toLowerCase() === "active" || f.status?.toLowerCase() === "optimal").length;
         const maintenanceF = fleet.filter(f => f.status?.toLowerCase() === "maintenance" || f.status?.toLowerCase() === "perlu perawatan").length;
@@ -54,6 +78,17 @@ export default function DashboardPage() {
         const infraP = projects.filter(p => p.sector?.toLowerCase() === "infrastructure").length;
         const oilGasP = projects.filter(p => p.sector?.toLowerCase() === "oil & gas").length;
 
+        const totalHealth = fleet.reduce((acc, curr) => acc + (curr.health_score || 0), 0);
+        const calculatedAvgHealth = fleet.length ? Math.round(totalHealth / fleet.length) : 0;
+
+        const calculatedTotalBudget = projects.reduce((acc, curr) => acc + (Number(curr.budget) || 0), 0);
+        const totalProgress = projects.reduce((acc, curr) => acc + (curr.progress || 0), 0);
+        const calculatedAvgProgress = projects.length ? Math.round(totalProgress / projects.length) : 0;
+
+        const totalPartsSKU = parts.length;
+        const outOfStockParts = parts.filter(p => p.stock === 0).length;
+        const calculatedPartsValue = parts.reduce((acc, curr) => acc + (Number(curr.price) * (curr.stock || 0)), 0);
+
         setData({
           totalFleet: fleet.length,
           activeFleet: activeF,
@@ -62,7 +97,13 @@ export default function DashboardPage() {
           miningProjects: miningP,
           infraProjects: infraP,
           oilGasProjects: oilGasP,
-          criticalAlerts: criticalA || 1 // fallback dummy alert untuk simulasi jika data kosong
+          criticalAlerts: criticalA || 1,
+          avgHealthScore: calculatedAvgHealth,
+          totalBudget: calculatedTotalBudget,
+          avgProjectProgress: calculatedAvgProgress,
+          totalPartsSKU,
+          outOfStockParts,
+          totalPartsValue: calculatedPartsValue
         });
 
       } catch (error: any) {
@@ -90,7 +131,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-white pt-24 pb-16 px-4 md:px-6 w-full overflow-x-hidden">
+    <main className="min-h-screen bg-neutral-950 text-white pt-12 pb-16 px-4 md:px-6 w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header Dashboard */}
@@ -123,8 +164,11 @@ export default function DashboardPage() {
                 <Truck size={20} />
               </div>
             </div>
-            <div className="mt-4 flex items-center gap-2 text-xs text-green-500">
-              <TrendingUp size={14} /> <span>{data.activeFleet} Unit Beroperasi Optimal</span>
+            <div className="mt-4 flex items-center gap-2 text-xs text-green-500 justify-between">
+              <div className="flex items-center gap-1.5">
+                <TrendingUp size={14} /> <span>{data.activeFleet} Unit Optimal</span>
+              </div>
+              <span className="text-slate-500 font-mono">Avg Health: {data.avgHealthScore}%</span>
             </div>
           </div>
 
@@ -139,8 +183,11 @@ export default function DashboardPage() {
                 <Briefcase size={20} />
               </div>
             </div>
-            <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
-              <Layers size={14} /> <span>Tersebar di 3 Sektor Strategis</span>
+            <div className="mt-4 flex items-center gap-2 text-xs text-slate-400 justify-between">
+              <div className="flex items-center gap-1.5">
+                <Layers size={14} /> <span>3 Sektor Strategis</span>
+              </div>
+              <span className="text-yellow-600 font-bold">Progress: {data.avgProjectProgress}%</span>
             </div>
           </div>
 
@@ -178,7 +225,43 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* Baris 2: Sebaran Distribusi Sektor & Status Kerja */}
+        {/* Baris 2: Finansial Proyek & Ringkasan Inventaris Suku Cadang */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Sub Card Finansial: Alokasi Kapital Global */}
+          <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-xl flex items-center justify-between">
+            <div>
+              <p className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">Total Kapitalisasi Anggaran Proyek</p>
+              <h4 className="text-xl md:text-2xl font-bold font-mono text-emerald-400 mt-1">{formatIDR(data.totalBudget)}</h4>
+            </div>
+            <div className="p-3 bg-emerald-950/40 border border-emerald-900/60 text-emerald-400 rounded-lg shrink-0">
+              <DollarSign size={22} />
+            </div>
+          </div>
+
+          {/* Sub Card Suku Cadang: Total Varian Item */}
+          <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-xl flex items-center justify-between">
+            <div>
+              <p className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">Katalog Suku Cadang Terdaftar</p>
+              <h4 className="text-xl md:text-2xl font-bold font-mono text-blue-400 mt-1">{data.totalPartsSKU} <span className="text-xs font-sans text-slate-500 font-normal">SKU</span></h4>
+            </div>
+            <div className="p-3 bg-blue-950/40 border border-blue-900/60 text-blue-400 rounded-lg shrink-0">
+              <Package size={22} />
+            </div>
+          </div>
+
+          {/* Sub Card Suku Cadang: Valuasi Aset Gudang */}
+          <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-xl flex items-center justify-between">
+            <div>
+              <p className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">Total Valuasi Nilai Inventaris</p>
+              <h4 className="text-xl md:text-2xl font-bold font-mono text-yellow-600 mt-1">{formatIDR(data.totalPartsValue)}</h4>
+            </div>
+            <div className="p-3 bg-yellow-950/40 border border-yellow-900/60 text-yellow-600 rounded-lg shrink-0">
+              <Gauge size={22} />
+            </div>
+          </div>
+        </div>
+
+        {/* Baris 3: Sebaran Distribusi Sektor & Status Kerja */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* Box Sebaran Proyek berdasarkan Sektor */}
@@ -248,6 +331,15 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {data.outOfStockParts > 0 && (
+              <div className="mt-4 p-3.5 bg-red-950/30 border border-red-900/60 rounded-xl flex items-center gap-3 text-xs text-red-400">
+                <ShieldAlert size={18} className="shrink-0 animate-bounce" />
+                <div>
+                  <span className="font-bold uppercase tracking-wide block">Stok Suku Cadang Kritis!</span>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Ada <span className="text-red-400 font-bold">{data.outOfStockParts} komponen</span> dalam kondisi kosong (0 Pcs) di gudang logistik.</p>
+                </div>
+              </div>
+            )}
         </div>
 
       </div>
