@@ -1,6 +1,9 @@
 import { supabase } from "@/lib/supabase";
 import FleetList from "@/components/FleetList";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function FleetPage() {
   const { data: fleet, error } = await supabase
     .from("fleet")

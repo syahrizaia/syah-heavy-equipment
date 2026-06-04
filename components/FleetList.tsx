@@ -93,7 +93,15 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
                 </motion.div>
               ))
             ) : (
-              <p className="col-span-full text-slate-500 italic">Tidak ada unit tersedia dalam kategori ini.</p>
+              <motion.p 
+                key="empty-available"
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                className="col-span-full text-slate-500 italic py-8"
+              >
+                Tidak ada unit tersedia dalam kategori ini.
+              </motion.p>
             )}
           </AnimatePresence>
         </motion.div>
@@ -153,7 +161,15 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
                 </motion.div>
               ))
             ) : (
-              <p className="col-span-full text-slate-500 italic">Belum ada arsip unit yang terjual.</p>
+              <motion.p 
+                key="empty-sold"
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                className="col-span-full text-slate-500 italic py-8"
+              >
+                Belum ada arsip unit yang terjual.
+              </motion.p>
             )}
           </AnimatePresence>
         </motion.div>
