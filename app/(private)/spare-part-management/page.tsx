@@ -268,7 +268,7 @@ export default function SparePartsManagement() {
       )}
       
       {/* JUDUL UTAMA */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 border-b border-neutral-800 pb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-neutral-800 pb-6">
         <div>
           <h1 className="text-3xl font-bold font-barlow uppercase tracking-tight flex items-center gap-2">
             <Wrench className="text-yellow-600" size={24} /> Manajemen Suku Cadang

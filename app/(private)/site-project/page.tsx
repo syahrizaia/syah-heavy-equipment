@@ -112,7 +112,7 @@ export default function ProjectsPage() {
     <div className="p-6 py-12 space-y-6">
       
       {/* --- HEADER --- */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-800 pb-6">
         <div>
           <h1 className="text-3xl font-bold font-barlow uppercase tracking-tight flex items-center gap-2">
             <Briefcase className="text-yellow-600" size={24} /> Proyek Situs

@@ -7,11 +7,22 @@ import Link from "next/link";
 
 export default function FleetCard({ fleet }: { fleet: any }) {
   const getFirstImage = () => {
+    if (!fleet?.image_url) return "/placeholder.png";
+
     const images = Array.isArray(fleet.image_url) ? fleet.image_url : [fleet.image_url];
     const firstUrl = images[0] || "/placeholder.png";
     
     // Sanitasi URL agar tetap konsisten dengan perbaikan sebelumnya
     return firstUrl.startsWith("http") ? firstUrl : `/${firstUrl.replace(/^\//, '')}`;
+  };
+
+  const formatPrice = (price: number | null) => {
+    if (!price || price === 0) return "Hubungi Kami";
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(price);
   };
 
   return (
@@ -33,8 +44,25 @@ export default function FleetCard({ fleet }: { fleet: any }) {
         />
       </div>
 
-      <h3 className="text-2xl font-bold font-barlow text-white mb-1 tracking-tight">{fleet?.title}</h3>
-      <p className="text-yellow-600 font-medium mb-6">{fleet?.model}</p>
+      <div className="mb-4">
+        <h3 className="text-2xl font-bold font-barlow text-white mb-1 tracking-tight">
+          {fleet?.title || "Tanpa Nama"}
+        </h3>
+        <p className="text-yellow-600 font-medium text-sm">
+          {fleet?.model || "-"}
+        </p>
+      </div>
+
+      <div className="mb-5">
+        <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-0.5">
+          Estimasi Harga
+        </span>
+        <span className={`text-xl font-extrabold font-mono ${
+          fleet?.price ? "text-white" : "text-yellow-600 italic text-base"
+        }`}>
+          {formatPrice(fleet?.price)}
+        </span>
+      </div>
 
       <div className="grid grid-cols-3 gap-2 mb-6 border-y border-neutral-800 py-4">
         <div className="text-center">

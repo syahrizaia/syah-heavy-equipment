@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         hostname: 'images.unsplash.com',
       },
       {
+          protocol: 'https',
+          hostname: 'encrypted-tbn0.gstatic.com',
+      },
+      {
         protocol: 'https',
         hostname: 'yrolzaoqepefsejuncgy.supabase.co',
         port: '',

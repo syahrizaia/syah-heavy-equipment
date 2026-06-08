@@ -2,7 +2,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Zap, Gauge, ShieldCheck, Calendar, Share2 } from "lucide-react";
+import { ArrowLeft, MapPin, Zap, Gauge, ShieldCheck, Calendar, Share2, Coins } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -21,6 +21,15 @@ function StatItem({ icon, label, value, valueColor = "text-white" }: { icon: any
 
 export default function FleetDetailContent({ fleet }: { fleet: any }) {
   const [isCopied, setIsCopied] = useState(false); // State untuk status salin tautan
+
+  const formatPrice = (price: number | null) => {
+    if (!price || price === 0) return "Hubungi Kami (Tanya Harga)";
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
 
   // Fungsi untuk membagikan tautan atau copy ke clipboard
   const handleShare = async () => {
@@ -79,6 +88,7 @@ export default function FleetDetailContent({ fleet }: { fleet: any }) {
 Nama Unit: ${fleet.title || "-"}
 Kategori: ${fleet.category || "-"}
 Model: ${fleet.model || "-"}
+Harga: ${fleet.price ? formatPrice(fleet.price) : "Hubungi Kami"}
 Status: ${fleet.status || "-"}
 
 Mohon informasi lebih lanjut mengenai ketersediaan dan prosedur pembeliannya. Terima kasih.`;
@@ -171,6 +181,13 @@ Mohon informasi lebih lanjut mengenai ketersediaan dan prosedur pembeliannya. Te
               <div className="text-[10px] bg-neutral-950 px-2.5 py-1 rounded border border-neutral-800 text-slate-500 w-fit font-mono">
                 UNIT ID: #{fleet.id}
               </div>
+
+              <StatItem 
+                icon={<Coins size={20}/>} 
+                label="Estimasi Harga" 
+                value={formatPrice(fleet.price)} 
+                valueColor={fleet.price ? "text-green-400 font-mono text-lg md:text-xl font-extrabold" : "text-yellow-600 italic"}
+              />
 
               {/* Menampilkan Model */}
               <StatItem icon={<Gauge size={20}/>} label="Model" value={fleet.model || "-"} />

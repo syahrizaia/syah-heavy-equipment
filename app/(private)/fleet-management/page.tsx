@@ -27,6 +27,7 @@ interface FleetItem {
   status: string;
   health_score: number;
   is_sold?: boolean;
+  price?: number | null;
 }
 
 export default function FleetPage() {
@@ -54,6 +55,7 @@ export default function FleetPage() {
     title: "", 
     category: "", 
     model: "", 
+    price: "",
     status: "Active", 
     health_score: 100, 
     description: "",
@@ -90,7 +92,7 @@ export default function FleetPage() {
     try {
       const { data, error } = await supabase
         .from("fleet")
-        .select("id, title, category, status, health_score, model, description, image_url, specs")
+        .select("id, title, category, status, health_score, model, description, image_url, specs, price")
         .order("title", { ascending: true });
 
       if (error) throw error;
@@ -132,6 +134,7 @@ export default function FleetPage() {
       
       const unitToSave = {
         ...newUnit,
+        price: newUnit.price !== "" && newUnit.price !== null ? Number(newUnit.price) : null,
         is_sold: newUnit.status === "Sold",
         image_url: uploadedUrls,
         specs: specsObject
@@ -176,6 +179,7 @@ export default function FleetPage() {
       title: item.title || "",
       category: item.category || "",
       model: item.model || "",
+      price: item.price ?? "",
       status: item.is_sold || item.status === "Sold" ? "Sold" : (item.status || "Active"),
       health_score: item.health_score || 0,
       description: item.description || "",
@@ -210,6 +214,7 @@ export default function FleetPage() {
       title: "", 
       category: "", 
       model: "", 
+      price: "",
       status: "Active", 
       health_score: 100, 
       description: "", 
@@ -304,7 +309,7 @@ export default function FleetPage() {
       )}
       
       {/* --- HEADER --- */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-800 pb-6">
         <div>
           <h1 className="text-3xl font-bold font-barlow uppercase tracking-tight flex items-center gap-2">
             <Truck className="text-yellow-600" size={24} /> Manajemen Armada
@@ -358,11 +363,19 @@ export default function FleetPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-slate-400 font-medium">Model *</label>
-              <input required placeholder="Contoh: CAT 320D" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
-                value={newUnit.model}
-                onChange={(e) => setNewUnit({...newUnit, model: e.target.value})} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-slate-400 font-medium">Model *</label>
+                <input required placeholder="Contoh: CAT 320D" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                  value={newUnit.model}
+                  onChange={(e) => setNewUnit({...newUnit, model: e.target.value})} />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-slate-400 font-medium">Harga (IDR) / Kosongkan jika Hubungi Kami</label>
+                <input type="number" min="0" placeholder="Contoh: 1250000000" className="w-full p-3 bg-neutral-950 border border-neutral-800 rounded text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors"
+                  value={newUnit.price}
+                  onChange={(e) => setNewUnit({...newUnit, price: e.target.value})} />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
