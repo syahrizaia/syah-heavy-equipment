@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import { Wrench, Zap, ShieldCheck, Settings, ArrowRight, MessageSquareShare, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const services = [
   {
@@ -30,6 +33,7 @@ const services = [
 
 export default function LayananPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [rentalForm, setRentalForm] = useState({
     fullName: "",
     companyName: "",
@@ -42,10 +46,29 @@ export default function LayananPage() {
 
   const whatsappNumber = "6281228134488";
 
-  const handleRentalSubmit = (e: React.FormEvent) => {
+  const handleRentalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    const message = `Halo Syah Heavy Equipment, saya ingin berkonsultasi mengenai kebutuhan Penyewaan Armada dengan detail berikut:
+    try {
+      // Langkah A: Amankan data ke database Supabase terlebih dahulu
+      const { error } = await supabase
+        .from("rental_requests")
+        .insert([
+          {
+            full_name: rentalForm.fullName,
+            company_name: rentalForm.companyName || null, // ubah string kosong jadi null
+            equipment_type: rentalForm.equipmentType,
+            duration: rentalForm.duration,
+            project_location: rentalForm.projectLocation,
+            start_date: rentalForm.startDate,
+            additional_notes: rentalForm.additionalNotes || null
+          }
+        ]);
+
+      if (error) throw error;
+
+      const message = `Halo Syah Heavy Equipment, saya ingin berkonsultasi mengenai kebutuhan Penyewaan Armada dengan detail berikut:
 
 Nama Lengkap: ${rentalForm.fullName}
 Perusahaan: ${rentalForm.companyName || "-"}
@@ -57,22 +80,29 @@ Catatan Tambahan: ${rentalForm.additionalNotes || "-"}
 
 Mohon informasi ketersediaan unit dan penawaran harganya. Terima kasih.`;
 
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    
-    // Buka WhatsApp di tab baru
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    
-    // Reset dan tutup modal
-    setIsModalOpen(false);
-    setRentalForm({
-      fullName: "",
-      companyName: "",
-      equipmentType: "",
-      duration: "",
-      projectLocation: "",
-      startDate: "",
-      additionalNotes: ""
-    });
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      
+      // Buka WhatsApp di tab baru
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+      
+      // Reset dan tutup modal
+      setIsModalOpen(false);
+      setRentalForm({
+        fullName: "",
+        companyName: "",
+        equipmentType: "",
+        duration: "",
+        projectLocation: "",
+        startDate: "",
+        additionalNotes: ""
+      });
+
+    } catch (error: any) {
+      console.error("Error saving data:", error);
+      toast.error("Gagal memproses formulir sewa. Silakan periksa koneksi Anda dan coba lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
@@ -267,7 +297,7 @@ Mohon informasi ketersediaan unit dan penawaran harganya. Terima kasih.`;
                 className="w-full bg-yellow-600 hover:bg-yellow-500 text-neutral-950 py-3.5 font-bold rounded-lg transition-colors text-sm uppercase tracking-wider mt-4 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-600/10"
               >
                 <MessageSquareShare size={18} />
-                Kirim via WhatsApp
+                {isSubmitting ? "Menyimpan Data..." : "Kirim via WhatsApp"}
               </button>
             </form>
           </motion.div>

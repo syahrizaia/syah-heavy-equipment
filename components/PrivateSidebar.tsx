@@ -77,6 +77,7 @@ export default function PrivateSidebar() {
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Manajemen Armada", href: "/fleet-management", icon: Truck },
     { name: "Manajemen Suku Cadang", href: "/spare-part-management", icon: Wrench },
+    { name: "Manajemen Penyewaan", href: "/rental-management", icon: Truck },
     { name: "Proyek Situs", href: "/site-project", icon: Briefcase },
     { name: "Pengaturan Akun", href: "/account", icon: User },
   ];
