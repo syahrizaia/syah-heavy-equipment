@@ -5,7 +5,7 @@ import { Suspense, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, ArrowRight, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -86,7 +86,7 @@ function SignInForm() {
           <div className="relative flex items-center">
             <Lock size={18} className="absolute left-4 text-slate-500" />
             <input
-              type={showPassword ? "text" : "password"} // Mengubah type secara dinamis
+              type={showPassword ? "text" : "password"}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -95,7 +95,7 @@ function SignInForm() {
             />
             {/* Tombol Toggle Mata */}
             <button
-              type="button" // Menghindari form trigger submit otomatis
+              type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-4 text-slate-500 hover:text-yellow-600 transition-colors focus:outline-none"
               aria-label={showPassword ? "Sembunyikan sandi" : "Tampilkan sandi"}
@@ -131,6 +131,18 @@ export default function SignInPage() {
   return (
     <main className="min-h-screen bg-neutral-950 flex items-center justify-center pt-24 pb-16 px-4 md:px-6 w-full overflow-x-hidden text-white">
       <div className="w-full max-w-md mx-auto">
+        
+        {/* Tombol Kembali ke Landing Page */}
+        <div className="flex justify-start mb-4">
+          <Link 
+            href="/" 
+            className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-yellow-500 transition-colors group"
+          >
+            <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" /> 
+            Kembali ke Beranda
+          </Link>
+        </div>
+
         <div className="text-center mb-8">
           <span className="text-yellow-600 font-bold tracking-[0.2em] uppercase text-xs">
             SHE Control Center

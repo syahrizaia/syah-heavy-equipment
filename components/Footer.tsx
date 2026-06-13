@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="bg-neutral-900 border-t border-neutral-800 text-slate-400 pt-12 pb-8 px-4 md:px-6 w-full overflow-hidden">
+    <footer className="bg-neutral-900 border-t border-neutral-800 text-slate-400 pt-12 pb-28 px-4 md:px-6 w-full overflow-hidden">
       {/* Grid diatur menjadi 2 kolom di mobile, 4 kolom di desktop */}
       <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
         
@@ -42,6 +42,7 @@ export default function Footer() {
         <div className="col-span-1">
           <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs md:text-sm">Dukungan</h4>
           <ul className="space-y-3 text-xs md:text-sm">
+            <li><Link href="/region" className="hover:text-yellow-600 transition-colors">Wilayah</Link></li>
             <li><Link href="/project" className="hover:text-yellow-600 transition-colors">Proyek</Link></li>
             <li><Link href="/careers" className="hover:text-yellow-600 transition-colors">Karir</Link></li>
             <li><Link href="/contact" className="hover:text-yellow-600 transition-colors">Pusat Bantuan</Link></li>
