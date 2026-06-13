@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
               Jika Anda memiliki pertanyaan mengenai kebijakan privasi ini atau ingin mengakses, memperbaiki, atau menghapus data pribadi Anda, silakan hubungi kami di:
             </p>
             <div className="space-y-2 font-bold text-white">
-              <p>Email: uluansyahroni@gmail.com</p>
+              <p>Email: uluansyahroni57@gmail.com</p>
               <p>Telepon: +62 812 2813 4488</p>
             </div>
           </section>

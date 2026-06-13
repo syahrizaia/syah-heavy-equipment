@@ -1,6 +1,9 @@
 import PublicNavbar from "@/components/PublicNavbar";
 import LandingPage from "./(public)/landing-page/page";
 import Footer from "@/components/Footer";
+import AIConsultant from "@/components/AIConsultant";
+import ShareWebsiteButton from "@/components/ShareWebsiteButton";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 export default function Home() {
   return (
@@ -11,6 +14,12 @@ export default function Home() {
       {/* Konten Halaman - Berikan padding top/bottom jika navbar/footer Anda berposisi fixed */}
       <main className="flex-1 w-full">
         <LandingPage />
+
+        <AIConsultant />
+
+        <ShareWebsiteButton />
+
+        <ScrollToTopButton />
       </main>
 
       <Footer />

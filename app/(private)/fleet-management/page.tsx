@@ -14,11 +14,10 @@ import {
   RefreshCw,
   Activity,
   X,
-  CheckCircle2,
-  XCircle,
   DollarSign
 } from "lucide-react";
 import FleetTable from "@/components/FleetTable";
+import { toast } from "sonner";
 
 interface FleetItem {
   id: string | number;
@@ -44,12 +43,6 @@ export default function FleetPage() {
     { key: "capacity", value: "" }
   ]);
 
-  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" | "error" }>({
-    show: false,
-    message: "",
-    type: "success"
-  });
-
   const [newUnit, setNewUnit] = useState<any>({ 
     id: null,
     title: "", 
@@ -62,13 +55,6 @@ export default function FleetPage() {
     image_url: "",
     specs: {}
   });
-
-  const triggerToast = (message: string, type: "success" | "error") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => {
-      setToast((prev) => ({ ...prev, show: false }));
-    }, 3500);
-  };
 
   // Fungsi untuk menambah baris baru
   const addSpecRow = () => {
@@ -98,7 +84,7 @@ export default function FleetPage() {
       if (error) throw error;
       setFleet(data || []);
     } catch (error: any) {
-      triggerToast("Gagal memuat data armada:", error.message);
+      toast.error("Gagal memuat data armada:", error.message);
     } finally {
       setLoading(false);
     }
@@ -152,12 +138,13 @@ export default function FleetPage() {
       resetForm();
       await fetchFleetData();
 
-      triggerToast(
-        isEditing ? "Data armada berhasil diperbarui!" : "Unit armada baru berhasil ditambahkan!", 
-        "success"
+      toast.success(
+        isEditing 
+          ? "Data unit armada berhasil diperbarui!" 
+          : "Unit armada baru berhasil ditambahkan ke sistem!"
       );
     } catch (err: any) {
-      triggerToast("Gagal menyimpan data: " + err.message, "error");
+      toast.error(`Gagal menyimpan data: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -193,19 +180,31 @@ export default function FleetPage() {
   };
 
   const handleDelete = async (id: string | number) => {
-    if (!confirm("Yakin ingin menghapus unit ini?")) return;
-    setLoading(true);
-    try {
-      const { error } = await supabase.from("fleet").delete().eq("id", id);
-      if (error) throw error;
-      
-      await fetchFleetData();
-      triggerToast("Unit armada berhasil dihapus dari sistem.", "success");
-    } catch (error: any) {
-      triggerToast("Gagal menghapus unit: " + error.message, "error");
-    } finally {
-      setLoading(false);
-    }
+    toast("Hapus Unit Armada?", {
+      description: "Yakin ingin menghapus unit ini dari sistem?",
+      duration: Infinity, // Toast tetap mengambang sampai user memilih tindakan
+      action: {
+        label: "Hapus",
+        onClick: async () => {
+          setLoading(true); // Aktifkan loading spinner pada tabel
+          try {
+            const { error } = await supabase.from("fleet").delete().eq("id", id);
+            if (error) throw error;
+            
+            await fetchFleetData();
+            toast.success("Unit armada berhasil dihapus dari sistem.");
+          } catch (error: any) {
+            toast.error(`Gagal menghapus unit: ${error.message}`);
+          } finally {
+            setLoading(false); // Matikan loading spinner
+          }
+        },
+      },
+      cancel: {
+        label: "Batal",
+        onClick: () => toast.dismiss(), // Tutup toast konfirmasi tanpa aksi apa pun
+      },
+    });
   };
 
   const resetForm = () => {
@@ -296,18 +295,6 @@ export default function FleetPage() {
   return (
     <div className="p-6 py-12 space-y-6">
 
-      {/* --- UI TOAST NOTIFICATION --- */}
-      {toast.show && (
-        <div className={`fixed top-5 right-5 z-[100] flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border text-sm font-bold animate-in fade-in slide-in-from-top-4 duration-300 backdrop-blur-md ${
-          toast.type === "success" 
-            ? "bg-emerald-950/90 text-emerald-400 border-emerald-500/30" 
-            : "bg-red-950/90 text-red-400 border-red-500/30"
-        }`}>
-          {toast.type === "success" ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
-          <span>{toast.message}</span>
-        </div>
-      )}
-      
       {/* --- HEADER --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-800 pb-6">
         <div>

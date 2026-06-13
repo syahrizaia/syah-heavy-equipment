@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function SettingsPage() {
   // State untuk Profil
@@ -67,7 +68,7 @@ export default function SettingsPage() {
         }
       }
     } catch (error: any) {
-      alert("Gagal memuat profil: " + error.message);
+      toast.error(`Gagal memuat profil: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -95,9 +96,9 @@ export default function SettingsPage() {
         });
 
       if (error) throw error;
-      alert("Profil berhasil diperbarui!");
+      toast.success("Profil Anda berhasil diperbarui!");
     } catch (error: any) {
-      alert("Gagal memperbarui profil: " + error.message);
+      toast.error(`Gagal memperbarui profil: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -107,7 +108,7 @@ export default function SettingsPage() {
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      alert("Konfirmasi password baru tidak cocok!");
+      toast.warning("Konfirmasi password baru tidak cocok!");
       return;
     }
 
@@ -118,12 +119,12 @@ export default function SettingsPage() {
       });
 
       if (error) throw error;
-      alert("Password berhasil diperbarui!");
+      toast.success("Kata sandi akun berhasil diperbarui!");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error: any) {
-      alert("Gagal memperbarui password: " + error.message);
+      toast.error(`Gagal memperbarui password: ${error.message}`);
     } finally {
       setPasswordLoading(false);
     }

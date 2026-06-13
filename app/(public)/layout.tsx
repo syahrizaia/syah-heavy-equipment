@@ -1,5 +1,8 @@
+import AIConsultant from "@/components/AIConsultant";
 import Footer from "@/components/Footer";
 import PublicNavbar from "@/components/PublicNavbar";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
+import ShareWebsiteButton from "@/components/ShareWebsiteButton";
 
 export default function PublicLayout({
   children,
@@ -14,6 +17,12 @@ export default function PublicLayout({
       {/* Konten Halaman - Berikan padding top/bottom jika navbar/footer Anda berposisi fixed */}
       <main className="flex-1 w-full">
         {children}
+
+        <AIConsultant />
+
+        <ShareWebsiteButton />
+
+        <ScrollToTopButton />
       </main>
 
       <Footer />

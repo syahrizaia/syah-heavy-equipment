@@ -8,20 +8,11 @@ import {
   Search, Plus, Edit2, Trash2, Wrench, 
   ChevronLeft, ChevronRight, AlertTriangle, 
   Package, PackageCheck, Layers, 
-  Loader2,
-  X,
-  CheckCircle2,
-  AlertCircle,
-  FileText,
-  ShieldCheck,
-  Scale,
-  ImageIcon,
-  Trash,
-  Upload,
-  Info,
-  RefreshCw
+  Loader2, Info, RefreshCw
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
+import SparePartModalDialog from "@/components/SparePartModalDialog";
 
 export default function SparePartsManagement() {
   const [parts, setParts] = useState<any[]>([]);
@@ -29,32 +20,13 @@ export default function SparePartsManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCat, setActiveCat] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(1);
-  const [uploading, setUploading] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
   
-  // State untuk Modal Form (Add / Edit)
+  // State Baru untuk kontrol Modal Dialog
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
-  const [formData, setFormData] = useState({
-    id: "",
-    name: "",
-    part_number: "",
-    category: "",
-    price: 0,
-    stock: 0,
-    compatibility: "",
-    image: [] as string[],
-    description: "",   
-    weight: "",        
-    warranty: ""       
-  });
+  const [selectedPart, setSelectedPart] = useState<any>(null);
   
-  const ITEMS_PER_PAGE = 10; // Batasan maksimal 10 data per halaman
-
-  const triggerToast = (message: string, type: "success" | "error" | "warning") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3500); // Otomatis hilang dalam 3.5 detik
-  };
+  const ITEMS_PER_PAGE = 10;
 
   const fetchParts = async () => {
     setLoading(true);
@@ -67,7 +39,7 @@ export default function SparePartsManagement() {
       if (error) throw error;
       setParts(data || []);
     } catch (error: any) {
-      triggerToast(`Gagal mengambil data: ${error.message}`, "error");
+      toast.error(`Gagal mengambil data: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -115,157 +87,48 @@ export default function SparePartsManagement() {
     return filteredParts.slice((activePage - 1) * ITEMS_PER_PAGE, activePage * ITEMS_PER_PAGE);
   }, [filteredParts, activePage]);
 
+  // Fungsi Pembuka Tambah Data
   const handleOpenAddModal = () => {
     setModalMode("add");
-    setFormData({ 
-      id: "", 
-      name: "", 
-      part_number: "", 
-      category: "Hidrolik", 
-      price: 0, 
-      stock: 0, 
-      compatibility: "",
-      image: [],
-      description: "",   
-      weight: "",        
-      warranty: ""       
-    });
+    setSelectedPart(null);
     setIsModalOpen(true);
   };
 
+  // Fungsi Pembuka Edit Data beserta data item baris tabel
   const handleOpenEditModal = (part: any) => {
     setModalMode("edit");
-
-    let imageArray: string[] = [];
-    if (Array.isArray(part.image)) {
-      imageArray = part.image;
-    } else if (typeof part.image === "string" && part.image !== "") {
-      imageArray = [part.image];
-    }
-
-    setFormData({ 
-      ...part,
-      image: imageArray,
-      description: part.description || "", 
-      weight: part.weight || "",           
-      warranty: part.warranty || ""         
-    });
+    setSelectedPart(part);
     setIsModalOpen(true);
-  };
-
-  const handleMultipleImagesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setUploading(true);
-    const newUploadedUrls = [...formData.image];
-
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileExt = file.name.split(".").pop();
-        // Membuat nama file acak yang unik agar tidak saling menimpa di storage
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-        const filePath = `products/${fileName}`;
-
-        // Proses upload file ke bucket bernama 'spare-parts'
-        const { error: uploadError } = await supabase.storage
-          .from("spare-parts")
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        // Ambil URL Publik file yang berhasil diunggah
-        const { data } = supabase.storage
-          .from("spare-parts")
-          .getPublicUrl(filePath);
-
-        if (data?.publicUrl) {
-          newUploadedUrls.push(data.publicUrl);
-        }
-      }
-
-      setFormData(prev => ({ ...prev, image: newUploadedUrls }));
-      triggerToast(`${files.length} Gambar berhasil diunggah ke Storage!`, "success");
-    } catch (error: any) {
-      triggerToast(`Gagal mengunggah gambar: ${error.message}`, "error");
-    } finally {
-      setUploading(false);
-      // Reset input file agar file yang sama bisa diupload ulang jika dibutuhkan
-      e.target.value = "";
-    }
-  };
-
-  const handleRemoveImageItem = (indexToRemove: number) => {
-    setFormData(prev => ({
-      ...prev,
-      image: prev.image.filter((_, idx) => idx !== indexToRemove)
-    }));
-    triggerToast("Gambar dihapus dari daftar.", "warning");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (modalMode === "add") {
-        const { id, ...insertPayload } = formData; 
-        const { error } = await supabase.from("spare_parts").insert([insertPayload]);
-        if (error) throw error;
-        triggerToast("Suku cadang baru berhasil ditambahkan!", "success");
-      } else {
-        const { error } = await supabase
-          .from("spare_parts")
-          .update({
-            name: formData.name,
-            part_number: formData.part_number,
-            category: formData.category,
-            price: formData.price,
-            stock: formData.stock,
-            compatibility: formData.compatibility,
-            image: formData.image,
-            description: formData.description, 
-            weight: formData.weight,           
-            warranty: formData.warranty         
-          })
-          .eq("id", formData.id);
-        if (error) throw error;
-        triggerToast("Data suku cadang berhasil diperbarui!", "success");
-      }
-      setIsModalOpen(false);
-      fetchParts(); // Refresh data
-    } catch (error: any) {
-      triggerToast(`Gagal menyimpan data: ${error.message}`, "error");
-    }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm(`Apakah Anda yakin ingin menghapus suku cadang dengan ID: ${id}?`)) {
-      try {
-        const { error } = await supabase.from("spare_parts").delete().eq("id", id);
-        if (error) throw error;
-        triggerToast("Data suku cadang berhasil dihapus!", "warning");
-        fetchParts(); // Refresh data
-      } catch (error: any) {
-        triggerToast(`Gagal menghapus: ${error.message}`, "error");
-      }
-    }
+    // Pemicu toast konfirmasi kustom
+    toast("Hapus Suku Cadang?", {
+      description: `Apakah Anda yakin ingin menghapus suku cadang dengan ID: ${id}?`,
+      duration: Infinity, // Toast tidak akan hilang sampai user memilih aksi
+      action: {
+        label: "Hapus",
+        onClick: async () => {
+          try {
+            const { error } = await supabase.from("spare_parts").delete().eq("id", id);
+            if (error) throw error;
+            
+            toast.success("Data suku cadang berhasil dihapus!");
+            fetchParts(); // Refresh tabel data
+          } catch (error: any) {
+            toast.error(`Gagal menghapus: ${error.message}`);
+          }
+        },
+      },
+      cancel: {
+        label: "Batal",
+        onClick: () => toast.dismiss(),
+      },
+    });
   };
 
   return (
     <div className="bg-black text-white min-h-screen py-12 px-4 md:px-6 max-w-7xl mx-auto w-full">
-
-      {toast && (
-        <div className={`fixed bottom-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl transition-all duration-300 animate-bounce ${
-          toast.type === "success" ? "bg-emerald-950/90 border-emerald-500/50 text-emerald-400" :
-          toast.type === "error" ? "bg-rose-950/90 border-rose-500/50 text-rose-400" :
-          "bg-amber-950/90 border-amber-500/50 text-amber-400"
-        }`}>
-          {toast.type === "success" && <CheckCircle2 size={18} />}
-          {toast.type === "error" && <AlertCircle size={18} />}
-          {toast.type === "warning" && <AlertTriangle size={18} />}
-          <span className="text-xs font-semibold tracking-wide">{toast.message}</span>
-        </div>
-      )}
       
       {/* JUDUL UTAMA */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-neutral-800 pb-6">
@@ -329,7 +192,6 @@ export default function SparePartsManagement() {
 
       {/* FILTER CONTROLS */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6 w-full">
-        {/* Kolom Search */}
         <div className="relative w-full md:max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
           <input
@@ -341,7 +203,6 @@ export default function SparePartsManagement() {
           />
         </div>
 
-        {/* Dropdown Filter Kategori */}
         <div className="flex items-center gap-2 w-full md:w-auto justify-end">
           <span className="text-xs text-slate-500 whitespace-nowrap">Filter Kategori:</span>
           <select
@@ -394,7 +255,7 @@ export default function SparePartsManagement() {
                         <div className="flex items-center gap-2">
                           <span className={`w-2 h-2 rounded-full ${
                             part.stock === 0 ? "bg-red-500" : part.stock <= 3 ? "bg-yellow-500" : "bg-green-500"
-                        }`} />
+                          }`} />
                           <span className="font-medium">
                             {part.stock === 0 ? "Habis" : part.stock <= 3 ? `${part.stock} Pcs (Limit)` : `${part.stock} Pcs`}
                           </span>
@@ -411,7 +272,7 @@ export default function SparePartsManagement() {
                             <Info size={13} />
                           </Link>
                           <button 
-                            onClick={() => handleOpenEditModal(part)} 
+                            onClick={() => handleOpenEditModal(part)}
                             className="p-2 border border-neutral-800 hover:border-blue-600/50 rounded bg-neutral-950/40 text-slate-400 hover:text-blue-400 transition-colors"
                             title="Ubah Data"
                           >
@@ -484,214 +345,14 @@ export default function SparePartsManagement() {
         )}
       </div>
 
-      {/* --- MODAL DIALOG (CREATE / UPDATE) --- */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-neutral-900 border border-neutral-800 rounded-xl max-w-xl w-full overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
-            <div className="flex justify-between items-center bg-neutral-950/60 px-6 py-4 border-b border-neutral-800 shrink-0">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-yellow-500">
-                {modalMode === "add" ? "Tambah Suku Cadang Baru" : "Ubah Data Suku Cadang"}
-              </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white transition-colors">
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4 text-xs overflow-y-auto flex-1 global-scrollbar">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-400 mb-1 font-medium">ID Kode Unit</label>
-                  <input
-                    type="text"
-                    disabled
-                    placeholder={modalMode === "add" ? "Dibuat Otomatis (Increase)" : "ID Terkunci"}
-                    value={modalMode === "edit" ? formData.id : ""}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-yellow-600 font-bold disabled:opacity-60 focus:outline-none cursor-not-allowed"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-400 mb-1 font-medium">Part Number (P/N)</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: 708-2L-00300"
-                    value={formData.part_number}
-                    onChange={(e) => setFormData({ ...formData, part_number: e.target.value })}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-white focus:outline-none focus:border-yellow-600/50"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-400 mb-1 font-medium">Nama Komponen / Suku Cadang</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Masukkan nama lengkap barang..."
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-white focus:outline-none focus:border-yellow-600/50"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-400 mb-1 font-medium">Kategori</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Hidrolik, Filter"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-white focus:outline-none focus:border-yellow-600/50"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-400 mb-1 font-medium">Jumlah Kuantitas Stok</label>
-                  <input
-                    type="number"
-                    required
-                    min={0}
-                    value={formData.stock}
-                    onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-white focus:outline-none focus:border-yellow-600/50"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-400 mb-1 font-medium">Estimasi Harga (IDR / Rupiah Mentah)</label>
-                <input
-                  type="number"
-                  required
-                  min={0}
-                  placeholder="Contoh: 450000"
-                  value={formData.price || ""}
-                  onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })}
-                  className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-white font-mono focus:outline-none focus:border-yellow-600/50"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-400 mb-1 font-medium">Kesesuaian Unit / Kompatibilitas</label>
-                <input
-                  type="text"
-                  placeholder="Contoh: Excavator PC200-8"
-                  value={formData.compatibility}
-                  onChange={(e) => setFormData({ ...formData, compatibility: e.target.value })}
-                  className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-white focus:outline-none focus:border-yellow-600/50"
-                />
-              </div>
-
-              <div className="border border-dashed border-neutral-800 bg-neutral-950/40 p-4 rounded-lg">
-                <label className="block text-slate-400 mb-2 font-medium flex items-center gap-1.5">
-                  <ImageIcon size={14} className="text-slate-500" /> Unggah Foto Produk (Bisa Pilih Banyak)
-                </label>
-                
-                <div className="flex items-center justify-center w-full mb-3">
-                  <label className="w-full flex flex-col items-center px-4 py-4 bg-neutral-900 text-slate-400 rounded-lg border border-neutral-800 hover:border-yellow-600/40 cursor-pointer transition-all hover:text-slate-200">
-                    {uploading ? (
-                      <div className="flex items-center gap-2 py-1 text-xs text-yellow-600 font-medium">
-                        <Loader2 className="animate-spin" size={16} />
-                        <span>Sedang mengunggah file ke Supabase...</span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-1">
-                        <Upload size={18} className="text-yellow-600" />
-                        <span className="text-[11px] tracking-wide">Klik untuk memilih beberapa gambar produk</span>
-                      </div>
-                    )}
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      disabled={uploading}
-                      onChange={handleMultipleImagesUpload}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-
-                {/* Grid Preview Alur Antrean Gambar */}
-                {formData.image.length > 0 && (
-                  <div className="grid grid-cols-4 gap-2 mt-2 bg-neutral-900/50 p-2 rounded-md border border-neutral-900">
-                    {formData.image.map((url, idx) => (
-                      <div key={idx} className="relative aspect-square rounded-md overflow-hidden border border-neutral-800 group/img">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={url} alt="Preview" className="object-cover w-full h-full" />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImageItem(idx)}
-                          className="absolute inset-0 bg-red-600/80 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity text-white"
-                          title="Hapus Gambar"
-                        >
-                          <Trash size={14} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-400 mb-1 font-medium flex items-center gap-1.5">
-                    <Scale size={14} className="text-slate-500" /> Berat Estimasi (e.g. Kg/Gram)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Contoh: 12.5 Kg atau 450 Gram"
-                    value={formData.weight}
-                    onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-white focus:outline-none focus:border-yellow-600/50"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-400 mb-1 font-medium flex items-center gap-1.5">
-                    <ShieldCheck size={14} className="text-slate-500" /> Masa Garansi Toko
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Contoh: 6 Bulan, 1 Tahun, atau No Warranty"
-                    value={formData.warranty}
-                    onChange={(e) => setFormData({ ...formData, warranty: e.target.value })}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-white focus:outline-none focus:border-yellow-600/50"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-400 mb-1 font-medium flex items-center gap-1.5">
-                  <FileText size={14} className="text-slate-500" /> Deskripsi Spesifikasi Suku Cadang
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Tulis detail spesifikasi mekanis, nomor seri alternatif, atau instruksi kesesuaian unit..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-neutral-950 border border-neutral-800 rounded p-2.5 text-white focus:outline-none focus:border-yellow-600/50 resize-none leading-relaxed"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 mt-4 border-t border-neutral-800 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-neutral-950 border border-neutral-800 hover:bg-neutral-800 rounded text-slate-400 hover:text-white transition-colors"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-neutral-950 font-bold rounded transition-colors"
-                >
-                  Simpan Data
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* --- MENGHUBUNGKAN MODAL DIALOG MENGGUNAKAN PROPS --- */}
+      <SparePartModalDialog 
+        isOpen={isModalOpen}
+        mode={modalMode}
+        selectedPart={selectedPart}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={fetchParts}
+      />
     </div>
   );
 }

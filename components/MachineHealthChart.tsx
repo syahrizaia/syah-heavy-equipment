@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
+import { useEffect, useState } from "react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 
 const data = [
@@ -11,6 +13,14 @@ const data = [
 ];
 
 export default function MachineHealthChart() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <div className="h-[300px] w-full" />;
+
   return (
     <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl">
       <h3 className="text-white font-barlow text-xl mb-6 flex items-center gap-2">

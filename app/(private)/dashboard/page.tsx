@@ -17,6 +17,7 @@ import {
   DollarSign,
   ShieldAlert
 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -89,6 +90,10 @@ export default function DashboardPage() {
         const outOfStockParts = parts.filter(p => p.stock === 0).length;
         const calculatedPartsValue = parts.reduce((acc, curr) => acc + (Number(curr.price) * (curr.stock || 0)), 0);
 
+        if (outOfStockParts > 0) {
+          toast.warning(`Logistik Kritis: Ada ${outOfStockParts} item suku cadang kosong di gudang!`);
+        }
+
         setData({
           totalFleet: fleet.length,
           activeFleet: activeF,
@@ -107,10 +112,8 @@ export default function DashboardPage() {
         });
 
       } catch (error: any) {
-        console.error("Gagal mengambil data statistik:");
-        console.error("Message:", error.message);
-        console.error("Details:", error.details);
-        console.error("Hint:", error.hint);
+        console.error("Gagal mengambil data statistik:", error);
+        toast.error(`Sinkronisasi Gagal: ${error.message || "Gagal memuat telematika IoT."}`);
       } finally {
         setLoading(false);
       }

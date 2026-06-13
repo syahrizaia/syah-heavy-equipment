@@ -16,6 +16,7 @@ import {
   Clock, 
   AlertCircle 
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ProjectItem {
   id: string | number;
@@ -47,6 +48,7 @@ export default function ProjectsPage() {
       setProjects(data || []);
     } catch (error: any) {
       console.error("Gagal memuat data proyek:", error.message);
+      toast.error(`Gagal memuat data proyek: ${error.message}`);
     } finally {
       setLoading(false);
     }

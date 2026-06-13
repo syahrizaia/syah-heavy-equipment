@@ -21,6 +21,7 @@ import {
   Ban,
   X,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface RentalItem {
   id: string | number;
@@ -56,7 +57,7 @@ export default function RentalsPage() {
       if (error) throw error;
       setRentals(data || []);
     } catch (error: any) {
-      console.error("Gagal memuat data penyewaan:", error.message);
+      toast.error(`Gagal memuat data penyewaan: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -83,9 +84,10 @@ export default function RentalsPage() {
       
       // Tutup modal setelah berhasil
       setSelectedRental(null);
+      toast.success(`Status order berhasil diperbarui menjadi ${newStatus.toUpperCase()}!`);
     } catch (error: any) {
       console.error("Gagal memperbarui status:", error.message);
-      alert("Terjadi kesalahan saat memperbarui status order.");
+      toast.error(`Gagal memperbarui status: ${error.message}`);
     } finally {
       setIsUpdating(false);
     }

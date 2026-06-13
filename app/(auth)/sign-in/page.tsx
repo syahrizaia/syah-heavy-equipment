@@ -3,24 +3,22 @@
 
 import { Suspense, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg("");
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -31,13 +29,19 @@ function SignInForm() {
       if (error) throw error;
 
       if (data?.user) {
+        toast.success("Login berhasil! Mengalihkan ke dashboard...");
         const nextPath = searchParams.get("next") || "/dashboard";
         window.location.href = nextPath;
-        // router.push(nextPath);
-        // router.refresh();
       }
     } catch (error: any) {
-      setErrorMsg(error.message || "Email atau password salah.");
+      const rawMessage = error.message || "Email atau password salah.";
+      if (rawMessage.includes("Invalid login credentials")) {
+        toast.error("Email atau password yang Anda masukkan salah.");
+      } else if (rawMessage.includes("Email not confirmed")) {
+        toast.warning("Email Perusahaan Anda belum dikonfirmasi.");
+      } else {
+        toast.error(rawMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -49,12 +53,6 @@ function SignInForm() {
       animate={{ opacity: 1, y: 0 }}
       className="bg-neutral-900 border border-neutral-800 p-6 md:p-8 rounded-xl shadow-xl"
     >
-      {/* Notifikasi Error */}
-      {errorMsg && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-xs md:text-sm rounded-lg">
-          {errorMsg}
-        </div>
-      )}
 
       <form onSubmit={handleLogin} className="space-y-5">
         {/* Input Email */}

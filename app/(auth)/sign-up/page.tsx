@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff, RefreshCw, Phone } from "lucide-react"; // Tambahkan Phone icon
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -16,13 +17,11 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
   const [, setSuccessMsg] = useState("");
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg("");
     setSuccessMsg("");
 
     try {
@@ -42,10 +41,25 @@ export default function SignUpPage() {
       if (error) throw error;
 
       if (data?.user) {
+        if (data.session) {
+          toast.success("Akun berhasil dibuat! Mengalihkan...");
+        } else {
+          toast.success("Registrasi sukses! Silakan periksa kotak masuk email Anda untuk konfirmasi.");
+        }
+
         router.push("/sign-in");
       }
     } catch (error: any) {
-      setErrorMsg(error.message || "Terjadi kesalahan saat mendaftar.");
+      const rawMessage = error.message || "Terjadi kesalahan saat mendaftar.";
+      
+      // Menerjemahkan beberapa error umum pendaftaran agar lebih rapi
+      if (rawMessage.includes("User already registered")) {
+        toast.error("Email ini sudah terdaftar di sistem Syah Equipment.");
+      } else if (rawMessage.includes("Password should be at least")) {
+        toast.warning("Password terlalu pendek. Gunakan minimal 6 karakter.");
+      } else {
+        toast.error(rawMessage);
+      }
       setLoading(false);
     }
   };
@@ -73,12 +87,6 @@ export default function SignUpPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-neutral-900 border border-neutral-800 p-6 md:p-8 rounded-xl shadow-xl"
         >
-          {/* Notifikasi Error */}
-          {errorMsg && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-xs md:text-sm rounded-lg">
-              {errorMsg}
-            </div>
-          )}
 
           <form onSubmit={handleSignUp} className="space-y-5">
             {/* Input Nama Lengkap */}
