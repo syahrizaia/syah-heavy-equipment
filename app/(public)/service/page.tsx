@@ -3,7 +3,7 @@
 
 import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
-import { Wrench, Zap, ShieldCheck, Settings, ArrowRight, MessageSquareShare, X } from "lucide-react";
+import { Wrench, Zap, ShieldCheck, Settings, ArrowRight, MessageSquareShare, X, Compass } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -13,6 +13,11 @@ const services = [
     icon: <Wrench size={32} className="md:w-10 md:h-10" />,
     title: "Penyewaan Armada",
     desc: "Akses ke armada ekskavator, truk, dan crane kelas dunia dengan masa sewa yang fleksibel untuk proyek jangka panjang maupun pendek."
+  },
+  {
+    icon: <Compass size={32} className="md:w-10 md:h-10" />,
+    title: "Pelacakan Pengiriman",
+    desc: "Pantau posisi mobilisasi alat berat Anda secara real-time dengan akurasi telemetri satelit GPS dan peta visualisasi makro 3D."
   },
   {
     icon: <Zap size={32} className="md:w-10 md:h-10" />,
@@ -28,7 +33,7 @@ const services = [
     icon: <Settings size={32} className="md:w-10 md:h-10" />,
     title: "Optimasi Operasional",
     desc: "Konsultasi sistematis untuk meningkatkan efisiensi penggunaan bahan bakar dan produktivitas operator di medan kerja yang berat."
-  }
+  },
 ];
 
 export default function LayananPage() {
@@ -144,21 +149,28 @@ Mohon informasi ketersediaan unit dan penawaran harganya. Terima kasih.`;
               <p className="text-slate-400 leading-relaxed mb-6 text-sm md:text-base">
                 {service.desc}
               </p>
-              {service.title === "Penyewaan Armada" ? (
-                <button 
-                  onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center gap-2 text-yellow-500 hover:text-white font-bold uppercase tracking-widest text-xs md:text-sm transition-colors cursor-pointer"
-                >
-                  Konsultasi Sekarang <ArrowRight size={16} />
-                </button>
-              ) : (
-                <Link 
-                  href="/contact" 
-                  className="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs md:text-sm hover:text-yellow-600 transition-colors"
-                >
-                  Konsultasi Sekarang <ArrowRight size={16} />
-                </Link>
-              )}
+              <div>
+                {service.title === "Penyewaan Armada" ? (
+                  <button 
+                    onClick={() => setIsModalOpen(true)}
+                    className="inline-flex items-center gap-2 text-yellow-500 hover:text-white font-bold uppercase tracking-widest text-xs md:text-sm transition-colors cursor-pointer"
+                  >
+                    Konsultasi Sekarang <ArrowRight size={16} />
+                  </button>
+                ) : (
+                  <Link 
+                    href={service.title === "Pelacakan Pengiriman" ? "/tracking" : "/contact"} 
+                    className="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs md:text-sm hover:text-yellow-600 transition-colors group/link"
+                  >
+                    {service.title === "Pelacakan Pengiriman" ? (
+                      <span className="text-yellow-500 group-hover/link:text-white transition-colors">Lacak Sekarang</span>
+                    ) : (
+                      "Konsultasi Sekarang"
+                    )}
+                    <ArrowRight size={16} className="group-hover/link:translate-x-1 transition-transform" />
+                  </Link>
+                )}
+              </div>
             </motion.div>
           ))}
         </div>
