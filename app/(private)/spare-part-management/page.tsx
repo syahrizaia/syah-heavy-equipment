@@ -101,28 +101,42 @@ export default function SparePartsManagement() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    // Pemicu toast konfirmasi kustom
-    toast("Hapus Suku Cadang?", {
-      description: `Apakah Anda yakin ingin menghapus suku cadang dengan ID: ${id}?`,
-      duration: Infinity, // Toast tidak akan hilang sampai user memilih aksi
+  const handleDelete = (id: string) => {
+    const confirmToastId = toast.warning("Hapus Suku Cadang?", {
+      description: `Apakah Anda yakin ingin menghapus secara permanen suku cadang dengan ID: ${id}?`,
+      duration: Infinity, 
       action: {
         label: "Hapus",
-        onClick: async () => {
-          try {
-            const { error } = await supabase.from("spare_parts").delete().eq("id", id);
-            if (error) throw error;
+        onClick: () => {
+          toast.dismiss(confirmToastId);
+
+          const deleteOperation = (async () => {
+            const { data, error } = await supabase
+              .from("spare_parts")
+              .delete()
+              .eq("id", id)
+              .select();
             
-            toast.success("Data suku cadang berhasil dihapus!");
-            fetchParts(); // Refresh tabel data
-          } catch (error: any) {
-            toast.error(`Gagal menghapus: ${error.message}`);
-          }
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+              throw new Error("RLS_ERR: Diizinkan oleh sistem, tetapi diblokir oleh RLS Policy DELETE di Supabase.");
+            }
+          })();
+
+          toast.promise(deleteOperation, {
+            loading: "Sedang menghapus data dari server...",
+            success: () => {
+              fetchParts(); // Pemicu render ulang tabel pasca sukses
+              return "Data suku cadang berhasil dihapus!";
+            },
+            error: (err: any) => `${err.message || "Terjadi kesalahan"}`,
+          });
         },
       },
       cancel: {
         label: "Batal",
-        onClick: () => toast.dismiss(),
+        onClick: () => toast.dismiss(confirmToastId), 
       },
     });
   };
