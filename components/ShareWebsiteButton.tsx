@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { Share2 } from "lucide-react";
@@ -40,7 +41,7 @@ export default function ShareWebsiteButton() {
         size={18} 
         className="text-yellow-600 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-200" 
       />
-      <span className="hidden sm:inline">Bagikan Website</span>
+      <span className="hidden sm:inline">Bagikan <br /> Website</span>
     </button>
   );
 }

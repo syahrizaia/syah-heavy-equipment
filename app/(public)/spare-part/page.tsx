@@ -12,12 +12,14 @@ import { supabase } from "@/lib/supabase";
 export default function SparePartsCatalog() {
   const [parts, setParts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  
+  const [typedQuery, setTypedQuery] = useState(""); // Untuk menampung ketikan user
+  const [searchQuery, setSearchQuery] = useState(""); // Untuk memfilter data & trigger DB
+  
   const [activeCat, setActiveCat] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(1);
   
-  const ITEMS_PER_PAGE = 12; // 12 item agar pas di grid 2, 3, atau 4 kolom
-//   const WHATSAPP_NUMBER = "6281228134488";
+  const ITEMS_PER_PAGE = 12;
   const WHATSAPP_NUMBER = "6281228134488";
 
   const fetchParts = async () => {
@@ -53,6 +55,35 @@ export default function SparePartsCatalog() {
     return ["Semua", ...Array.from(new Set(parts.map((item) => item.category))).sort()];
   }, [parts]);
 
+  const handleSearchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchQuery(typedQuery); // Terapkan pencarian ke filter UI
+    setCurrentPage(1);
+
+    if (!typedQuery.trim()) return;
+
+    // Cari suku cadang lokal yang sesuai dengan kata kunci
+    const matchedParts = parts.filter((part) => {
+      return (
+        part.name?.toLowerCase().includes(typedQuery.toLowerCase()) ||
+        part.part_number?.toLowerCase().includes(typedQuery.toLowerCase()) ||
+        part.compatibility?.toLowerCase().includes(typedQuery.toLowerCase())
+      );
+    });
+
+    // Jika ada yang cocok, kirim array ID ke Supabase RPC untuk menaikkan search_count
+    if (matchedParts.length > 0) {
+      const targetIds = matchedParts.map((part) => part.id);
+      const { error } = await supabase.rpc("increment_parts_search_count", {
+        item_ids: targetIds,
+      });
+
+      if (error) {
+        console.error("Gagal memperbarui statistik search_count:", error.message);
+      }
+    }
+  };
+
   const filteredParts = useMemo(() => {
     return parts.filter((part) => {
       const matchesCategory = activeCat === "Semua" || part.category === activeCat;
@@ -75,8 +106,7 @@ export default function SparePartsCatalog() {
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
+    setTypedQuery(e.target.value);
   };
 
   const getWhatsAppLink = (part: any) => {
@@ -117,16 +147,24 @@ export default function SparePartsCatalog() {
 
       {/* SEARCH & FILTER BAR */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-10 w-full">
-        <div className="relative w-full md:max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-          <input
-            type="text"
-            placeholder="Cari nama suku cadang, part number, atau kecocokan..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-full pl-11 pr-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors placeholder:text-slate-500"
-          />
-        </div>
+        <form onSubmit={handleSearchSubmit} className="relative w-full md:max-w-md flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+            <input
+              type="text"
+              placeholder="Cari nama suku cadang, part number..."
+              value={typedQuery}
+              onChange={handleSearchChange}
+              className="w-full pl-11 pr-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-600/50 transition-colors placeholder:text-slate-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-yellow-600 text-neutral-950 px-5 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-white transition-colors"
+          >
+            Cari
+          </button>
+        </form>
 
         <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 whitespace-nowrap scrollbar-none [scrollbar-width:none]">
           {categories.map((cat) => (

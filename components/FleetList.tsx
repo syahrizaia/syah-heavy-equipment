@@ -4,12 +4,16 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import FleetCard from "./FleetCard";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export default function FleetList({ initialData }: { initialData: any[] }) {
   const [activeCat, setActiveCat] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentSoldPage, setCurrentSoldPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+
   const ITEMS_PER_PAGE = 15; // Batas maksimal data per halaman
 
   const categories = [
@@ -28,9 +32,49 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
     const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
     return dateB - dateA; // Mengurutkan dari waktu paling besar/baru
   });
+
+  const handleSearchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAppliedSearch(searchTerm);
+    setCurrentPage(1);
+    setCurrentSoldPage(1);
+
+    if (!searchTerm.trim()) return;
+
+    // Cari item yang cocok dengan kata kunci pencarian saat ini
+    const matchingItems = sortedData.filter((item) => {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        item.title?.toLowerCase().includes(searchLower) ||
+        item.model?.toLowerCase().includes(searchLower) ||
+        item.description?.toLowerCase().includes(searchLower)
+      );
+    });
+
+    // Jika ada item yang cocok, kirim array ID ke fungsi RPC Supabase
+    if (matchingItems.length > 0) {
+      const targetIds = matchingItems.map((item) => item.id);
+      const { error } = await supabase.rpc("increment_fleet_search_count", {
+        item_ids: targetIds,
+      });
+
+      if (error) {
+        console.error("Gagal memperbarui data search_count:", error);
+      }
+    }
+  };
   
-  // Filter untuk unit yang tersedia
-  const availableData = sortedData.filter((i) => 
+  const filteredData = sortedData.filter((item) => {
+    if (!appliedSearch) return true;
+    const searchLower = appliedSearch.toLowerCase();
+    return (
+      item.title?.toLowerCase().includes(searchLower) ||
+      item.model?.toLowerCase().includes(searchLower) ||
+      item.description?.toLowerCase().includes(searchLower)
+    );
+  });
+  
+  const availableData = filteredData.filter((i) => 
     !i.is_sold && (activeCat === "Semua" || i.category === activeCat)
   );
   const totalPages = Math.ceil(availableData.length / ITEMS_PER_PAGE);
@@ -39,8 +83,7 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
     currentPage * ITEMS_PER_PAGE
   );
 
-  // Filter untuk unit yang terjual (selalu ditampilkan di bagian bawah)
-  const soldData = sortedData.filter((i) => i.is_sold === true);
+  const soldData = filteredData.filter((i) => i.is_sold === true);
   const totalSoldPages = Math.ceil(soldData.length / ITEMS_PER_PAGE);
   const paginatedSoldData = soldData.slice(
     (currentSoldPage - 1) * ITEMS_PER_PAGE,
@@ -57,13 +100,34 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
       
       {/* --- SECTION: UNIT TERSEDIA --- */}
       <div className="mb-20">
-        <div className="mb-12">
-          <h2 className="text-3xl md:text-5xl font-bold font-barlow text-white uppercase mb-4">
-            Armada Tersedia
-          </h2>
-          <p className="text-slate-400 max-w-xl text-sm md:text-base">
-            Jelajahi unit alat berat siap pakai yang mendukung produktivitas proyek Anda.
-          </p>
+       <div className="mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <h2 className="text-3xl md:text-5xl font-bold font-barlow text-white uppercase mb-4">
+              Armada Tersedia
+            </h2>
+            <p className="text-slate-400 max-w-xl text-sm md:text-base">
+              Jelajahi unit alat berat siap pakai yang mendukung produktivitas proyek Anda.
+            </p>
+          </div>
+
+          <form onSubmit={handleSearchSubmit} className="w-full md:w-80 flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+              <input
+                type="text"
+                placeholder="Cari armada atau model..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-neutral-900 border border-neutral-800 rounded pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-yellow-600 transition-colors"
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-yellow-600 text-neutral-950 px-4 py-2 font-bold uppercase text-xs tracking-widest hover:bg-white transition-colors"
+            >
+              Cari
+            </button>
+          </form>
         </div>
 
         {/* Filter Buttons */}

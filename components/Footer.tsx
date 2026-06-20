@@ -45,7 +45,7 @@ export default function Footer() {
             <li><Link href="/region" className="hover:text-yellow-600 transition-colors">Wilayah</Link></li>
             <li><Link href="/project" className="hover:text-yellow-600 transition-colors">Proyek</Link></li>
             <li><Link href="/careers" className="hover:text-yellow-600 transition-colors">Karir</Link></li>
-            <li><Link href="/contact" className="hover:text-yellow-600 transition-colors">Pusat Bantuan</Link></li>
+            <li><Link href="/help-center" className="hover:text-yellow-600 transition-colors">Pusat Bantuan</Link></li>
             <li><Link href="/privacy" className="hover:text-yellow-600 transition-colors">Kebijakan Privasi</Link></li>
           </ul>
         </div>
