@@ -7,6 +7,7 @@ import FeatureGrid from "@/components/FeatureGrid";
 import MarketTrendsSection from "@/components/MarketTrendsSection";
 import OperationalAnalyticsSection from "@/components/OperationalAnalyticsSection";
 import RentalDemandSection from "@/components/RentalDemandSection";
+import MobilePWAButton from "@/components/MobilePWAButton";
 
 // Helper untuk status indicator
 function StatusIndicator({ label, status, alert }: any) {
@@ -54,6 +55,7 @@ export default async function LandingPage() {
             Solusi alat berat terintegrasi dengan teknologi IoT untuk efisiensi operasional maksimal.
           </p>
           <div className="flex gap-4">
+            <MobilePWAButton />
             <Link href="/fleet" className="bg-yellow-600 text-neutral-950 px-6 md:px-8 py-3 md:py-4 font-bold uppercase tracking-widest hover:bg-white transition-colors text-sm md:text-base">
               Lihat Katalog
             </Link>
