@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     locale: "id_ID",
     type: "website",
   },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
