@@ -1,10 +1,10 @@
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 import FleetList from "@/components/FleetList";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function FleetPage() {
+  const supabase = await createServerSupabase();
   const { data: fleet, error } = await supabase
     .from("fleet")
     .select("*");

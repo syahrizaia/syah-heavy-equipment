@@ -1,8 +1,10 @@
-import AIConsultant from "@/components/AIConsultant";
+import dynamic from "next/dynamic";
 import Footer from "@/components/Footer";
 import PublicNavbar from "@/components/PublicNavbar";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
-import ShareWebsiteButton from "@/components/ShareWebsiteButton";
+
+const AIConsultant = dynamic(() => import("@/components/AIConsultant"));
+const ScrollToTopButton = dynamic(() => import("@/components/ScrollToTopButton"));
+const ShareWebsiteButton = dynamic(() => import("@/components/ShareWebsiteButton"));
 
 export default function PublicLayout({
   children,

@@ -25,7 +25,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
             key={sector}
             onClick={() => setActiveSector(sector)}
             // flex-shrink-0: Penting agar tombol tidak mengecil saat di-scroll
-            className={`px-6 py-2 border font-bold uppercase text-xs tracking-widest transition-all flex-shrink-0 whitespace-nowrap ${
+            className={`px-6 py-2 border font-bold uppercase text-xs tracking-widest transition-all shrink-0 whitespace-nowrap ${
               activeSector === sector 
                 ? "bg-yellow-600 border-yellow-600 text-neutral-950" 
                 : "border-neutral-800 text-white hover:border-yellow-600"

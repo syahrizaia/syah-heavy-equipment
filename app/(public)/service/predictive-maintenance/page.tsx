@@ -132,7 +132,7 @@ export default function PemeliharaanPrediktifPage() {
             
             <div className="space-y-4">
               <div className="flex gap-4 p-4 bg-neutral-900/40 rounded-xl border border-neutral-900">
-                <Database className="text-yellow-600 flex-shrink-0 mt-1" size={18} />
+                <Database className="text-yellow-600 shrink-0 mt-1" size={18} />
                 <div>
                   <h4 className="text-sm font-bold text-slate-200">Algoritma Predictive Machine Learning</h4>
                   <p className="text-xs text-slate-400 mt-1 leading-relaxed">Sistem membandingkan historical log jutaan jam kerja alat berat untuk memprediksi sisa usia pakai komponen mekanikal.</p>
@@ -140,7 +140,7 @@ export default function PemeliharaanPrediktifPage() {
               </div>
 
               <div className="flex gap-4 p-4 bg-neutral-900/40 rounded-xl border border-neutral-900">
-                <CheckCircle className="text-emerald-500 flex-shrink-0 mt-1" size={18} />
+                <CheckCircle className="text-emerald-500 shrink-0 mt-1" size={18} />
                 <div>
                   <h4 className="text-sm font-bold text-slate-200">Penghematan Biaya Hingga 35%</h4>
                   <p className="text-xs text-slate-400 mt-1 leading-relaxed">Menghindari downtime mendadak di tengah proyek strategis dengan penjadwalan suku cadang sebelum aus.</p>

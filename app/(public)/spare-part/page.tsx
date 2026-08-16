@@ -166,7 +166,7 @@ export default function SparePartsCatalog() {
           </button>
         </form>
 
-        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 whitespace-nowrap scrollbar-none [scrollbar-width:none]">
+        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {categories.map((cat) => (
             <button
               key={cat}
@@ -236,7 +236,7 @@ export default function SparePartsCatalog() {
                   {/* Spesifikasi Teknis */}
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-bold text-slate-100 group-hover:text-yellow-500 transition-colors line-clamp-2 mb-1 min-h-[40px]">
+                      <h3 className="font-bold text-slate-100 group-hover:text-yellow-500 transition-colors line-clamp-2 mb-1 min-h-10">
                         {part.name}
                       </h3>
                       <p className="text-xs font-mono text-slate-500 mb-4">P/N: {part.part_number}</p>

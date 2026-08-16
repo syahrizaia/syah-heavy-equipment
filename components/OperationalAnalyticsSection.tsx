@@ -76,7 +76,7 @@ export default function OperationalAnalyticsSection({
           <div className="mt-6">
             <div className="w-full bg-neutral-950 rounded-full h-1.5 overflow-hidden border border-neutral-800">
               <div 
-                className="bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500 h-full transition-all duration-500" 
+                className="bg-linear-to-r from-red-500 via-yellow-500 to-emerald-500 h-full transition-all duration-500" 
                 style={{ width: `${avgHealthScore}%` }}
               />
             </div>

@@ -25,7 +25,7 @@ export default function MapTracking3D({ latitude, longitude, itemName }: MapProp
 
   if (!mapboxToken) {
     return (
-      <div className="w-full h-full min-h-[400px] rounded-xl bg-neutral-900 border border-neutral-800 flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-full h-full min-h-100 rounded-xl bg-neutral-900 border border-neutral-800 flex flex-col items-center justify-center p-6 text-center">
         <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-400 mb-3 font-bold text-lg">
           !
         </div>

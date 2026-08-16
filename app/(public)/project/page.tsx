@@ -1,7 +1,10 @@
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 import ProjectList from "@/components/ProjectList";
 
+export const revalidate = 60;
+
 export default async function ProyekPage() {
+  const supabase = await createServerSupabase();
   const { data: projects, error } = await supabase.from("projects").select("*");
 
   if (error) {

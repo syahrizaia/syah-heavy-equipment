@@ -406,7 +406,7 @@ export default function FleetPage() {
                     <button 
                       type="button" 
                       onClick={() => removeSpecRow(index)}
-                      className="p-2.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors flex-shrink-0"
+                      className="p-2.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors shrink-0"
                       title="Hapus"
                     >
                       <X size={16} />

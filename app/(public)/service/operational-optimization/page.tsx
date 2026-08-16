@@ -113,7 +113,7 @@ Mohon jadwalkan sesi presentasi dan audit awal operasional bersama tim konsultan
         {/* Tiga Metrik Keberhasilan Utama */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-xl flex items-start gap-4">
-            <div className="w-12 h-12 rounded-lg bg-yellow-600/10 flex items-center justify-center text-yellow-600 flex-shrink-0">
+            <div className="w-12 h-12 rounded-lg bg-yellow-600/10 flex items-center justify-center text-yellow-600 shrink-0">
               <Fuel size={24} />
             </div>
             <div>
@@ -124,7 +124,7 @@ Mohon jadwalkan sesi presentasi dan audit awal operasional bersama tim konsultan
           </div>
 
           <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-xl flex items-start gap-4">
-            <div className="w-12 h-12 rounded-lg bg-emerald-600/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
+            <div className="w-12 h-12 rounded-lg bg-emerald-600/10 flex items-center justify-center text-emerald-500 shrink-0">
               <TrendingUp size={24} />
             </div>
             <div>
@@ -135,7 +135,7 @@ Mohon jadwalkan sesi presentasi dan audit awal operasional bersama tim konsultan
           </div>
 
           <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-xl flex items-start gap-4">
-            <div className="w-12 h-12 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-400 flex-shrink-0">
+            <div className="w-12 h-12 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-400 shrink-0">
               <Gauge size={24} />
             </div>
             <div>

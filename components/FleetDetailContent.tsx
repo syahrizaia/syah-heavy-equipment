@@ -127,9 +127,9 @@ Mohon informasi lebih lanjut mengenai ketersediaan dan prosedur pembeliannya. Te
           <h1 className="text-3xl md:text-6xl font-bold font-barlow uppercase mt-2 mb-6 leading-tight">{fleet.title}</h1>
           
           {/* Scrollable Image Gallery */}
-          <div className="flex gap-4 overflow-x-auto pb-4 snap-x [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-neutral-700">
+          <div className="flex gap-4 overflow-x-auto pb-4 snap-x scrollbar-thin [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-neutral-700">
             {images.map((url: string, idx: number) => (
-              <div key={idx} className="relative min-w-[300px] md:min-w-[600px] h-64 md:h-[450px] bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden snap-start shrink-0">
+              <div key={idx} className="relative min-w-75 md:min-w-150 h-64 md:h-112.5 bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden snap-start shrink-0">
                 <Image
                   src={url}
                   alt={`${fleet.title} - Image ${idx + 1}`}

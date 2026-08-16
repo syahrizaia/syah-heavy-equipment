@@ -244,7 +244,7 @@ export default function SparePartModalDialog({ isOpen, mode, selectedPart, onClo
                 </div>
 
                 <div className="border border-dashed border-neutral-800 bg-neutral-950/40 p-4 rounded-lg">
-                    <label className="block text-slate-400 mb-2 font-medium flex items-center gap-1.5">
+                    <label className="text-slate-400 mb-2 font-medium flex items-center gap-1.5">
                     <ImageIcon size={14} className="text-slate-500" /> Unggah Foto Produk (Bisa Pilih Banyak)
                     </label>
                     
@@ -294,7 +294,7 @@ export default function SparePartModalDialog({ isOpen, mode, selectedPart, onClo
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                    <label className="block text-slate-400 mb-1 font-medium flex items-center gap-1.5">
+                    <label className="text-slate-400 mb-1 font-medium flex items-center gap-1.5">
                         <Scale size={14} className="text-slate-500" /> Berat Estimasi (e.g. Kg/Gram)
                     </label>
                     <input
@@ -306,7 +306,7 @@ export default function SparePartModalDialog({ isOpen, mode, selectedPart, onClo
                     />
                     </div>
                     <div>
-                    <label className="block text-slate-400 mb-1 font-medium flex items-center gap-1.5">
+                    <label className="text-slate-400 mb-1 font-medium flex items-center gap-1.5">
                         <ShieldCheck size={14} className="text-slate-500" /> Masa Garansi Toko
                     </label>
                     <input
@@ -320,7 +320,7 @@ export default function SparePartModalDialog({ isOpen, mode, selectedPart, onClo
                 </div>
 
                 <div>
-                    <label className="block text-slate-400 mb-1 font-medium flex items-center gap-1.5">
+                    <label className="text-slate-400 mb-1 font-medium flex items-center gap-1.5">
                     <FileText size={14} className="text-slate-500" /> Deskripsi Spesifikasi Suku Cadang
                     </label>
                     <textarea

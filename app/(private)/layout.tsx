@@ -18,7 +18,7 @@ export default function PrivateLayout({
           {children}
         </main>
 
-        <footer className="border-t border-neutral-900 bg-neutral-900/20 py-4 px-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-500 w-full mt-auto flex-shrink-0">
+        <footer className="border-t border-neutral-900 bg-neutral-900/20 py-4 px-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-500 w-full mt-auto shrink-0">
           <div className="text-center">
             &copy; {new Date().getFullYear()} <span className="text-yellow-600 font-bold tracking-wide uppercase">Syah Heavy Equipment Control Center</span>. Hak Cipta Dilindungi.
           </div>

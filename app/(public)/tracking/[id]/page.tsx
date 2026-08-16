@@ -5,11 +5,12 @@ import { useState, useEffect } from "react";
 import { 
   Truck, MapPin, CheckCircle2, Clock, ArrowLeft 
 } from "lucide-react";
-// Hapus import Link jika tidak digunakan di tempat lain dalam file ini
-import MapTracking3D from "@/components/MapTracking3D";
+import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabase";
 import { useParams, useRouter } from "next/navigation"; // Tambahkan useRouter di sini
 import { toast } from "sonner";
+
+const MapTracking3D = dynamic(() => import("@/components/MapTracking3D"), { ssr: false });
 
 // Mock data dengan koordinat awal terintegrasi
 const mockShipment = {

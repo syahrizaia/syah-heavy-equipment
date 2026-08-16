@@ -1,9 +1,11 @@
+import dynamic from "next/dynamic";
 import PublicNavbar from "@/components/PublicNavbar";
 import LandingPage from "./(public)/landing-page/page";
 import Footer from "@/components/Footer";
-import AIConsultant from "@/components/AIConsultant";
-import ShareWebsiteButton from "@/components/ShareWebsiteButton";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
+
+const AIConsultant = dynamic(() => import("@/components/AIConsultant"));
+const ShareWebsiteButton = dynamic(() => import("@/components/ShareWebsiteButton"));
+const ScrollToTopButton = dynamic(() => import("@/components/ScrollToTopButton"));
 
 export default function Home() {
   return (

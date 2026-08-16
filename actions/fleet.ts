@@ -1,8 +1,9 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 
 export async function markFleetAsSold(fleetId: number) {
+  const supabase = await createServerSupabase();
   const { data, error } = await supabase
     .from("fleet")
     .update({ 

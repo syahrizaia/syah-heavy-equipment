@@ -3,9 +3,11 @@
 import { motion } from "framer-motion";
 import { Wrench, Zap, ShieldCheck, Settings, Compass } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import ServiceCard from "@/components/services/ServiceCard";
-import RentalModal from "@/components/services/RentalModal";
+
+const RentalModal = dynamic(() => import("@/components/services/RentalModal"));
 
 const services = [
   {
@@ -73,7 +75,7 @@ export default function LayananPage() {
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          className="mt-16 md:mt-24 p-8 md:p-12 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-lg text-neutral-950 text-center"
+          className="mt-16 md:mt-24 p-8 md:p-12 bg-linear-to-r from-yellow-600 to-yellow-500 rounded-lg text-neutral-950 text-center"
         >
           <h2 className="text-2xl md:text-4xl font-bold font-barlow mb-4 md:mb-6">
             Butuh Solusi Khusus untuk Proyek Anda?

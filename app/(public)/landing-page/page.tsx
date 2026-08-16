@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import FleetSection from "@/components/FleetSection";
-import MachineHealthChart from "@/components/MachineHealthChart";
 import FeatureGrid from "@/components/FeatureGrid";
 import MarketTrendsSection from "@/components/MarketTrendsSection";
 import OperationalAnalyticsSection from "@/components/OperationalAnalyticsSection";
 import RentalDemandSection from "@/components/RentalDemandSection";
 import MobilePWAButton from "@/components/MobilePWAButton";
+
+const MachineHealthChart = dynamic(() => import("@/components/MachineHealthChart"));
 
 // Helper untuk status indicator
 function StatusIndicator({ label, status, alert }: any) {
@@ -21,7 +23,10 @@ function StatusIndicator({ label, status, alert }: any) {
   );
 }
 
+export const revalidate = 60;
+
 export default async function LandingPage() {
+  const supabase = await createServerSupabase();
   const [fleetRes, partsRes, projectsRes, shipmentsRes, rentalRes] = await Promise.all([
     supabase.from("fleet").select("*"),
     supabase.from("spare_parts").select("*"),
@@ -42,7 +47,7 @@ export default async function LandingPage() {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center px-4 md:px-6">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 w-full md:w-1/2 h-full bg-gradient-to-l from-yellow-600/10 to-transparent" />
+        <div className="absolute right-0 top-0 w-full md:w-1/2 h-full bg-linear-to-l from-yellow-600/10 to-transparent" />
         
         <div className="max-w-7xl mx-auto w-full relative z-10 pt-20">
           <h2 className="text-yellow-600 font-barlow font-bold tracking-[0.2em] md:tracking-[0.4em] uppercase mb-4 text-sm md:text-base">

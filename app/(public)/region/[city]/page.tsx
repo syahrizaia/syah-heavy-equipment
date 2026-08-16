@@ -78,7 +78,7 @@ export default async function HalamanWilayah({ params }: Props) {
         </div>
 
         {/* PROMOSI FITUR UNGGULAN: 3D Tracking Kampanye (Langkah 5 SEO) */}
-        <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 border border-yellow-600/20 p-6 md:p-8 rounded-xl flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+        <div className="bg-linear-to-br from-neutral-900 to-neutral-950 border border-yellow-600/20 p-6 md:p-8 rounded-xl flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
           <div className="space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-yellow-600/10 border border-yellow-500/20 rounded-full text-yellow-500 text-[10px] font-bold tracking-wider uppercase">
               <Compass size={12} className="animate-spin-slow" /> Transparansi Pengiriman Unit

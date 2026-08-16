@@ -222,7 +222,7 @@ export default function SparePartsManagement() {
           <select
             value={activeCat}
             onChange={(e) => { setActiveCat(e.target.value); setCurrentPage(1); }}
-            className="bg-neutral-900 border border-neutral-800 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-yellow-600/50 cursor-pointer min-w-[140px]"
+            className="bg-neutral-900 border border-neutral-800 rounded-lg text-xs px-3 py-2.5 text-white focus:outline-none focus:border-yellow-600/50 cursor-pointer min-w-35"
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>{cat}</option>

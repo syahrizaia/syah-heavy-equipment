@@ -26,6 +26,9 @@ export const metadata: Metadata = {
     "sewa ekskavator bekasi", "rental lowbed balikpapan"
   ],
   authors: [{ name: "Syah Heavy Equipment" }],
+  alternates: {
+    canonical: "https://syahheavyequipment.vercel.app",
+  },
   openGraph: {
     title: "Syah Heavy Equipment | Sewa & Mobilisasi Alat Berat Premium",
     description: "Penyewaan armada alat berat standar HSE dengan dukungan tracking GPS live 3D.",
@@ -33,6 +36,20 @@ export const metadata: Metadata = {
     siteName: "Syah Heavy Equipment",
     locale: "id_ID",
     type: "website",
+    images: [
+      {
+        url: "https://syahheavyequipment.vercel.app/icon.png",
+        width: 512,
+        height: 512,
+        alt: "Syah Heavy Equipment",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Syah Heavy Equipment | Sewa & Mobilisasi Alat Berat Premium",
+    description: "Penyewaan armada alat berat standar HSE dengan dukungan tracking GPS live 3D.",
+    images: ["https://syahheavyequipment.vercel.app/icon.png"],
   },
   manifest: "/manifest.json",
 };
@@ -80,7 +97,7 @@ export default function RootLayout({
 
   return (
     <html
-      lang="en"
+      lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>

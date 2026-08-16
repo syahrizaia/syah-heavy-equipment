@@ -4,6 +4,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Weight, Gauge, Zap } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function FleetCard({ fleet }: { fleet: any }) {
   const getFirstImage = () => {
@@ -25,6 +26,8 @@ export default function FleetCard({ fleet }: { fleet: any }) {
     }).format(price);
   };
 
+  const specs = fleet?.specs || {};
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 50 }}
@@ -36,11 +39,14 @@ export default function FleetCard({ fleet }: { fleet: any }) {
       <div className="absolute top-0 left-0 w-1 h-full bg-yellow-600/20 group-hover:bg-yellow-600 transition-colors" />
       
       <div className="mb-6 h-48 bg-neutral-950 rounded-lg flex items-center justify-center overflow-hidden">
-        <motion.img 
-          whileHover={{ scale: 1.1 }}
-          src={getFirstImage()} 
-          alt={fleet?.title} 
-          className="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity"
+        <Image
+          src={getFirstImage()}
+          alt={fleet?.title || "Unit alat berat"}
+          width={400}
+          height={300}
+          loading="lazy"
+          sizes="(max-width: 768px) 100vw, 400px"
+          className="object-cover w-full h-full opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
         />
       </div>
 
@@ -67,15 +73,15 @@ export default function FleetCard({ fleet }: { fleet: any }) {
       <div className="grid grid-cols-3 gap-2 mb-6 border-y border-neutral-800 py-4">
         <div className="text-center">
           <Weight size={18} className="mx-auto text-slate-400 mb-1" />
-          <span className="text-[10px] text-slate-500 uppercase">{fleet?.specs.weight}</span>
+          <span className="text-[10px] text-slate-500 uppercase">{specs.weight || "-"}</span>
         </div>
         <div className="text-center border-x border-neutral-800">
           <Gauge size={18} className="mx-auto text-slate-400 mb-1" />
-          <span className="text-[10px] text-slate-500 uppercase">{fleet?.specs.power}</span>
+          <span className="text-[10px] text-slate-500 uppercase">{specs.power || "-"}</span>
         </div>
         <div className="text-center">
           <Zap size={18} className="mx-auto text-slate-400 mb-1" />
-          <span className="text-[10px] text-slate-500 uppercase">{fleet?.specs.capacity}</span>
+          <span className="text-[10px] text-slate-500 uppercase">{specs.capacity || "-"}</span>
         </div>
       </div>
 

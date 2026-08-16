@@ -86,7 +86,7 @@ export default function MobilePWAButton() {
         </p>
       </div>
       
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         <button 
           onClick={handleInstallClick}
           className="bg-yellow-600 hover:bg-yellow-500 text-neutral-950 px-3 py-2 rounded font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer"

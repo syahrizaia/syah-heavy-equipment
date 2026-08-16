@@ -41,19 +41,19 @@ export default function FleetSection({ data }: { data: any[] }) {
         <h2 className="text-4xl font-bold font-barlow mb-4">ARMADA KAMI</h2>
         <Link
           href="/fleet" 
-          className="inline-block px-6 py-3 border border-neutral-800 text-white hover:border-yellow-600 hover:text-yellow-500 font-bold uppercase text-xs tracking-widest transition-all duration-300 bg-neutral-900/50 hover:bg-neutral-900 text-center sm:text-left flex-shrink-0"
+          className="inline-block px-6 py-3 border border-neutral-800 text-white hover:border-yellow-600 hover:text-yellow-500 font-bold uppercase text-xs tracking-widest transition-all duration-300 bg-neutral-900/50 hover:bg-neutral-900 text-center sm:text-left shrink-0"
         >
           Lihat Semua Armada
         </Link>
       </div>
       
       {/* Kontrol Filter */}
-      <div className="flex gap-4 mb-12 overflow-x-auto pb-3 whitespace-nowrap scrollbar-none snap-x [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-4 mb-12 overflow-x-auto pb-3 whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCat(cat)}
-            className={`px-6 py-2.5 border font-bold uppercase transition-all text-xs md:text-sm snap-start flex-shrink-0 ${
+            className={`px-6 py-2.5 border font-bold uppercase transition-all text-xs md:text-sm snap-start shrink-0 ${
               activeCat === cat 
                 ? "bg-yellow-600 border-yellow-600 text-neutral-950" 
                 : "border-neutral-800 hover:border-yellow-600 text-white"

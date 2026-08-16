@@ -137,7 +137,7 @@ export default function PusatBantuanPage() {
                       <motion.div
                         animate={{ rotate: isOpen ? 180 : 0 }}
                         transition={{ duration: 0.2 }}
-                        className="text-slate-500 flex-shrink-0"
+                        className="text-slate-500 shrink-0"
                       >
                         <ChevronDown size={18} />
                       </motion.div>
@@ -171,7 +171,7 @@ export default function PusatBantuanPage() {
         </div>
 
         {/* Bagian Kontak Tambahan */}
-        <div className="bg-gradient-to-r from-neutral-900 to-neutral-950 border border-neutral-800 p-6 md:p-8 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="bg-linear-to-r from-neutral-900 to-neutral-950 border border-neutral-800 p-6 md:p-8 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-1">
             <h3 className="text-lg font-bold font-barlow uppercase text-white">Tidak Menemukan Jawaban?</h3>
             <p className="text-xs text-slate-400 max-w-md">

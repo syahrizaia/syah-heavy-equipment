@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Menu, X, ChevronRight, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import RentalModal from "@/components/services/RentalModal";
+
+const RentalModal = dynamic(() => import("@/components/services/RentalModal"));
 
 const links = [
   { label: "Beranda", href: "/" },

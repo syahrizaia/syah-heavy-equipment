@@ -106,7 +106,7 @@ export default function PrivateSidebar() {
       `}>
         <div className="space-y-8">
           {/* Logo Brand (Hanya Terlihat di Desktop) */}
-          <div className="hidden md:block text-yellow-600 font-bold tracking-[0.1em] uppercase text-sm border-b border-neutral-800 pb-4">
+          <div className="hidden md:block text-yellow-600 font-bold tracking-widest uppercase text-sm border-b border-neutral-800 pb-4">
             SHE Control Center
           </div>
           
@@ -138,7 +138,7 @@ export default function PrivateSidebar() {
         {/* --- AREA INFORMASI PENGGUNA DINAMIS --- */}
         <div className="space-y-4 border-t border-neutral-800 pt-4">
           <div className="flex items-center gap-3 px-2">
-            <div className="p-2 bg-neutral-950 rounded-full text-slate-500 flex-shrink-0">
+            <div className="p-2 bg-neutral-950 rounded-full text-slate-500 shrink-0">
               <User size={16} />
             </div>
             <div className="flex flex-col min-w-0">

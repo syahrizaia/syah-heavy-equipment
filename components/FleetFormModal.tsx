@@ -107,8 +107,56 @@ export default function FleetFormModal({
           </div>
         </div>
 
-        {/* ... (Lanjutkan sisa input: Status, Health, Specs, Desc, File) ... */}
-        {/* Potongan kode specs dan file sama seperti sebelumnya, hanya ganti state ke formData/specs lokal */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <label className="text-xs text-slate-400">Status</label>
+            <select className="w-full p-2.5 bg-neutral-950 border border-neutral-800 rounded text-sm text-white"
+              value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}>
+              <option value="Active">Active</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Sold">Sold</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-slate-400">Health Score</label>
+            <input type="number" min={0} max={100} className="w-full p-2.5 bg-neutral-950 border border-neutral-800 rounded text-sm"
+              value={formData.health_score} onChange={e => setFormData({...formData, health_score: Number(e.target.value)})} />
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-xs text-slate-400">Deskripsi</label>
+          <textarea className="w-full p-2.5 bg-neutral-950 border border-neutral-800 rounded text-sm h-20 resize-none"
+            value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs text-slate-400">Spesifikasi</label>
+          {specs.map((spec: any, i: number) => (
+            <div key={i} className="grid grid-cols-2 gap-2">
+              <input placeholder="Kunci (cth: power)" className="w-full p-2.5 bg-neutral-950 border border-neutral-800 rounded text-sm"
+                value={spec.key} onChange={e => setSpecs(specs.map((s: any, j: number) => j === i ? {...s, key: e.target.value} : s))} />
+              <div className="flex gap-2">
+                <input placeholder="Nilai" className="w-full p-2.5 bg-neutral-950 border border-neutral-800 rounded text-sm"
+                  value={spec.value} onChange={e => setSpecs(specs.map((s: any, j: number) => j === i ? {...s, value: e.target.value} : s))} />
+                <button type="button" onClick={() => setSpecs(specs.filter((_: any, j: number) => j !== i))}
+                  className="px-2 text-slate-400 hover:text-red-500"><X size={16}/></button>
+              </div>
+            </div>
+          ))}
+          <button type="button" onClick={() => setSpecs([...specs, { key: "", value: "" }])}
+            className="text-xs text-yellow-600 hover:text-yellow-500">+ Tambah Spesifikasi</button>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-xs text-slate-400">Foto Unit (multiple)</label>
+          <input type="file" multiple accept="image/*"
+            className="w-full p-2.5 bg-neutral-950 border border-neutral-800 rounded text-sm text-slate-300 file:mr-3 file:rounded file:border-0 file:bg-yellow-600 file:text-black file:px-3 file:py-1.5"
+            onChange={e => setSelectedFiles(Array.from(e.target.files || []))} />
+          {formData.image_url?.length > 0 && (
+            <p className="text-[10px] text-slate-500">{formData.image_url.length} gambar tersimpan</p>
+          )}
+        </div>
 
         <button disabled={loading} className="w-full bg-yellow-600 text-black py-3 rounded-lg font-bold uppercase text-sm mt-4">
           {loading ? <RefreshCw className="animate-spin mx-auto" size={20}/> : "Simpan Data"}

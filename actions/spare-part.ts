@@ -1,6 +1,6 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 
 interface OrderItem {
   partId: string;
@@ -9,6 +9,7 @@ interface OrderItem {
 }
 
 export async function processSparePartSale({ partId, currentStock, quantityBought }: OrderItem) {
+  const supabase = await createServerSupabase();
   // Hitung sisa stok baru
   const newStock = currentStock - quantityBought;
 

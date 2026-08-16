@@ -176,7 +176,7 @@ export default function AIConsultant() {
 
       {/* JENDELA POP-UP CHAT */}
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] sm:w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] sm:w-96 h-125 bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           {/* Header */}
           <div className="bg-slate-900 text-white p-4 flex items-center space-x-3">
             <span className="text-2xl"><FaGear /></span>
@@ -222,7 +222,7 @@ export default function AIConsultant() {
                     key={idx}
                     type="button"
                     onClick={() => handleSendMessage(undefined, question)}
-                    className="bg-slate-100 hover:bg-yellow-100 border border-slate-200 hover:border-yellow-400 text-slate-700 hover:text-slate-900 text-xs px-3 py-1.5 rounded-full transition-all duration-150 font-medium whitespace-nowrap flex-shrink-0"
+                    className="bg-slate-100 hover:bg-yellow-100 border border-slate-200 hover:border-yellow-400 text-slate-700 hover:text-slate-900 text-xs px-3 py-1.5 rounded-full transition-all duration-150 font-medium whitespace-nowrap shrink-0"
                   >
                     {question}
                   </button>
@@ -236,7 +236,7 @@ export default function AIConsultant() {
               <button
                 type="button"
                 onClick={handleVoiceInput}
-                className={`p-2.5 rounded-xl transition flex-shrink-0 ${
+                className={`p-2.5 rounded-xl transition shrink-0 ${
                   isListening 
                     ? "bg-red-500 text-white animate-bounce" 
                     : "bg-slate-100 hover:bg-slate-200 text-slate-600"
@@ -260,7 +260,7 @@ export default function AIConsultant() {
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="bg-slate-900 hover:bg-slate-800 text-white p-2.5 rounded-xl text-sm font-medium disabled:opacity-40 transition flex-shrink-0"
+                className="bg-slate-900 hover:bg-slate-800 text-white p-2.5 rounded-xl text-sm font-medium disabled:opacity-40 transition shrink-0"
               >
                 Kirim
               </button>
