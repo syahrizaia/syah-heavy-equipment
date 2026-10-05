@@ -36,12 +36,12 @@ export default function FleetSection({ data }: { data: any[] }) {
   const limitedData = filteredData.slice(0, 3);
 
   return (
-    <section className="py-24 px-6 max-w-7xl mx-auto w-full overflow-hidden">
+    <section className="mx-auto w-full max-w-7xl overflow-hidden px-5 py-20 sm:px-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-12">
-        <h2 className="text-4xl font-bold font-barlow mb-4">ARMADA KAMI</h2>
+        <div><p className="mb-2 font-mono text-[10px] uppercase tracking-[.24em] text-amber-400">Fleet / ready for deployment</p><h2 className="font-barlow text-4xl font-bold uppercase sm:text-5xl">Armada kami</h2></div>
         <Link
           href="/fleet" 
-          className="inline-block px-6 py-3 border border-neutral-800 text-white hover:border-yellow-600 hover:text-yellow-500 font-bold uppercase text-xs tracking-widest transition-all duration-300 bg-neutral-900/50 hover:bg-neutral-900 text-center sm:text-left shrink-0"
+          className="inline-block shrink-0 border border-white/15 bg-white/[.03] px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[.16em] text-white transition hover:border-amber-400 hover:text-amber-300 sm:text-left"
         >
           Lihat Semua Armada
         </Link>
@@ -53,10 +53,10 @@ export default function FleetSection({ data }: { data: any[] }) {
           <button
             key={cat}
             onClick={() => setActiveCat(cat)}
-            className={`px-6 py-2.5 border font-bold uppercase transition-all text-xs md:text-sm snap-start shrink-0 ${
+            className={`shrink-0 snap-start border px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider transition-all md:text-xs ${
               activeCat === cat 
-                ? "bg-yellow-600 border-yellow-600 text-neutral-950" 
-                : "border-neutral-800 hover:border-yellow-600 text-white"
+                ? "border-amber-400 bg-amber-400 text-[#090d16]"
+                : "border-white/10 text-slate-300 hover:border-amber-400/60 hover:text-white"
             }`}
           >
             {cat}

@@ -129,13 +129,13 @@ export default function SparePartsCatalog() {
   };
 
   return (
-    <section className="bg-black text-white min-h-screen py-24 px-4 md:px-6 max-w-7xl mx-auto w-full overflow-hidden">
+    <section className="mx-auto min-h-screen w-full max-w-7xl overflow-hidden bg-[#090d16] px-4 py-24 text-white md:px-6">
       
       {/* HEADER SECTION */}
-      <div className="mb-12 border-b border-neutral-800 pb-8">
+      <div className="mb-12 border-b border-white/10 pb-8">
         <div className="flex items-center gap-3 mb-4">
           <Wrench className="text-yellow-600" size={28} />
-          <span className="text-xs font-bold uppercase tracking-widest text-yellow-600 font-barlow">Spare Parts Center</span>
+          <span className="font-mono text-xs font-bold uppercase tracking-[.18em] text-amber-400">Parts / inventory system</span>
         </div>
         <h1 className="text-4xl md:text-6xl font-bold font-barlow uppercase mb-4 tracking-tight">
           Katalog Suku Cadang
@@ -200,10 +200,12 @@ export default function SparePartsCatalog() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-neutral-900 border border-neutral-800/80 rounded-xl overflow-hidden flex flex-col justify-between hover:border-neutral-700 transition-all group shadow-lg"
+                  whileHover={{ y: -4 }}
+                  viewport={{ once: true, amount: 0.12 }}
+                  className="group flex flex-col justify-between overflow-hidden border border-white/[.08] bg-[#111827] shadow-lg transition-all hover:border-amber-400/40"
                 >
                   {/* Foto Produk */}
-                  <div className="relative h-44 w-full bg-neutral-950 overflow-hidden border-b border-neutral-800/60">
+                  <div className="relative h-44 w-full overflow-hidden border-b border-white/[.07] bg-[#090d16]">
                     <Image
                       src={
                         (Array.isArray(part.image) 
@@ -212,7 +214,7 @@ export default function SparePartsCatalog() {
                         "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=500"
                       }
                       alt={part.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
+                      className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
                       loading="lazy"
                       width={400}
                       height={300}
@@ -249,7 +251,7 @@ export default function SparePartsCatalog() {
                   </div>
 
                   {/* Harga & Tombol Interaksi */}
-                  <div className="px-5 pb-5 border-t border-neutral-800/40 bg-neutral-950/20 flex flex-col gap-3">
+                  <div className="flex flex-col gap-3 border-t border-white/[.07] bg-black/10 px-5 pb-5">
                     <div className="flex flex-col">
                       <span className="text-[10px] uppercase text-slate-500 tracking-wider">Estimasi Harga</span>
                       <span className="text-lg font-black text-white">{formatIDR(part.price)}</span>

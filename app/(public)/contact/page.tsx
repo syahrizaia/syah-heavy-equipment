@@ -39,7 +39,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-neutral-900 p-6 md:p-12 border border-neutral-800"
+            className="border border-white/10 bg-[#111827]/85 p-6 md:p-12"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
               <input type="text" placeholder="Nama Lengkap" className="bg-neutral-950 border border-neutral-800 p-4 focus:border-yellow-600 outline-none transition-colors w-full" />

@@ -19,11 +19,12 @@ export default function ServiceCard({ service, idx, onOpenRentalModal }: Service
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: idx * 0.1, duration: 0.6 }}
-      className="bg-neutral-900 border border-neutral-800 p-6 md:p-10 hover:border-yellow-600/50 transition-all group rounded-xl"
+      viewport={{ once: true, amount: 0.18 }}
+      transition={{ delay: idx * 0.07, duration: 0.45 }}
+      whileHover={{ y: -4 }}
+      className="group relative overflow-hidden border border-white/[.09] bg-[#111827] p-6 transition-all hover:border-amber-400/50 md:p-10"
     >
-      <div className="text-yellow-600 mb-6 md:mb-8 transform group-hover:scale-110 transition-transform duration-300">
+      <div className="mb-6 inline-flex bg-[#090d16] p-3 text-amber-400 transition-transform duration-300 group-hover:scale-105 md:mb-8">
         {service.icon}
       </div>
       <h3 className="text-xl md:text-2xl font-bold font-barlow text-white mb-3 md:mb-4">

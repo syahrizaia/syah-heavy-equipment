@@ -157,11 +157,11 @@ export default function AIConsultant() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 font-sans">
+    <div className="fixed bottom-6 right-4 z-50 font-sans sm:right-6">
       {/* TOMBOL UTAMA (FLOATING BUTTON) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-yellow-500 hover:bg-yellow-600 text-slate-900 p-4 rounded-full shadow-2xl transition-all transform hover:scale-105 flex items-center justify-center border-2 border-slate-800"
+        className="flex items-center justify-center border border-amber-200/40 bg-amber-400 p-4 text-[#090d16] shadow-[0_12px_44px_rgba(245,158,11,.22)] transition-all hover:scale-[1.03] hover:bg-amber-300"
         title="Konsultasi AI Alat Berat"
       >
         {isOpen ? (
@@ -176,25 +176,25 @@ export default function AIConsultant() {
 
       {/* JENDELA POP-UP CHAT */}
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] sm:w-96 h-125 bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="absolute bottom-20 right-0 flex h-[min(31rem,calc(100dvh-8rem))] w-[calc(100vw-2rem)] flex-col overflow-hidden border border-white/10 bg-[#0d131f] shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-200 sm:w-96">
           {/* Header */}
-          <div className="bg-slate-900 text-white p-4 flex items-center space-x-3">
+          <div className="flex items-center space-x-3 border-b border-white/10 bg-[#111827] p-4 text-white">
             <span className="text-2xl"><FaGear /></span>
             <div>
-              <h3 className="font-bold text-sm text-yellow-500">Syah Heavy Equipment</h3>
+              <h3 className="text-sm font-bold text-amber-400">Syah Heavy Equipment</h3>
               <p className="text-xs text-slate-300">AI Expert Consultant</p>
             </div>
           </div>
 
           {/* Area Percakapan */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50">
+          <div className="flex-1 space-y-3 overflow-y-auto bg-[#090d16] p-4">
             {messages.map((m, index) => (
               <div key={index} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div
                   className={`max-w-[85%] rounded-2xl p-3 text-sm ${
                     m.role === "user"
-                      ? "bg-yellow-500 text-slate-900 rounded-br-none"
-                      : "bg-white text-slate-800 rounded-bl-none border border-slate-200 shadow-sm"
+                      ? "rounded-br-none bg-amber-400 text-[#090d16]"
+                      : "rounded-bl-none border border-white/10 bg-[#111827] text-slate-200"
                   }`}
                 >
                   <p className="whitespace-pre-line">{formatMessageText(m.content)}</p>
@@ -203,7 +203,7 @@ export default function AIConsultant() {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white border border-slate-200 text-slate-500 rounded-2xl p-3 text-xs italic shadow-sm animate-pulse">
+                <div className="animate-pulse rounded-2xl rounded-bl-none border border-white/10 bg-[#111827] p-3 text-xs italic text-slate-400">
                   Consultant sedang mengetik...
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default function AIConsultant() {
           </div>
 
           {/* Wrapper Kontrol Bawah dengan Batas Kanan-Kiri Konsisten */}
-          <div className="bg-white border-t border-slate-200 p-3 space-y-3">
+          <div className="space-y-3 border-t border-white/10 bg-[#0d131f] p-3">
             
             {/* Bagian Tombol Tanya Cepat (Bisa Digeser Horizontal / Scrollable) */}
             {!isLoading && (
@@ -222,7 +222,7 @@ export default function AIConsultant() {
                     key={idx}
                     type="button"
                     onClick={() => handleSendMessage(undefined, question)}
-                    className="bg-slate-100 hover:bg-yellow-100 border border-slate-200 hover:border-yellow-400 text-slate-700 hover:text-slate-900 text-xs px-3 py-1.5 rounded-full transition-all duration-150 font-medium whitespace-nowrap shrink-0"
+                    className="shrink-0 whitespace-nowrap border border-white/10 bg-[#111827] px-3 py-1.5 text-xs font-medium text-slate-300 transition-all duration-150 hover:border-amber-400/50 hover:text-amber-300"
                   >
                     {question}
                   </button>
@@ -239,7 +239,7 @@ export default function AIConsultant() {
                 className={`p-2.5 rounded-xl transition shrink-0 ${
                   isListening 
                     ? "bg-red-500 text-white animate-bounce" 
-                    : "bg-slate-100 hover:bg-slate-200 text-slate-600"
+                    : "bg-[#1f2937] text-slate-300 hover:bg-[#334155]"
                 }`}
                 title={isListening ? "Berhenti mendengarkan" : "Bicara dengan suara"}
               >
@@ -253,14 +253,14 @@ export default function AIConsultant() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={isListening ? "Mendengarkan suara Anda..." : "Tanya seputar alat berat/sparepart..."}
                 disabled={isListening}
-                className="text-slate-800 flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-yellow-500 disabled:bg-slate-50"
+                className="flex-1 border border-white/10 bg-[#111827] px-3 py-2 text-sm text-white focus:border-amber-400 disabled:opacity-60"
               />
 
               {/* Tombol Kirim */}
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="bg-slate-900 hover:bg-slate-800 text-white p-2.5 rounded-xl text-sm font-medium disabled:opacity-40 transition shrink-0"
+                className="shrink-0 bg-amber-400 p-2.5 text-sm font-bold text-[#090d16] transition hover:bg-amber-300 disabled:opacity-40"
               >
                 Kirim
               </button>

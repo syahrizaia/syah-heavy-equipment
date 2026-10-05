@@ -17,7 +17,7 @@ export default function PublicLayout({
       <PublicNavbar />
 
       {/* Konten Halaman - Berikan padding top/bottom jika navbar/footer Anda berposisi fixed */}
-      <main className="flex-1 w-full">
+      <div className="flex-1 w-full">
         {children}
 
         <AIConsultant />
@@ -25,7 +25,7 @@ export default function PublicLayout({
         <ShareWebsiteButton />
 
         <ScrollToTopButton />
-      </main>
+      </div>
 
       <Footer />
     </div>

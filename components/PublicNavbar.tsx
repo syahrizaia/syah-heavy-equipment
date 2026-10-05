@@ -42,19 +42,19 @@ export default function PublicNavbar() {
 
   return (
     <>
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? "bg-neutral-950/80 backdrop-blur-md border-b border-neutral-800" : "bg-transparent"}`}>
+      <nav className={`fixed z-50 w-full transition-all duration-300 ${scrolled ? "border-b border-white/10 bg-[#090d16]/90 backdrop-blur-xl" : "bg-gradient-to-b from-[#090d16]/75 to-transparent"}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
           
           {/* Logo Perusahaan */}
-          <Link href="/" className="font-barlow font-bold text-lg md:text-2xl tracking-tight md:tracking-widest text-white flex justify-center items-center gap-2">
+          <Link href="/" className="flex items-center justify-center gap-2 font-barlow text-lg font-bold tracking-tight text-white md:text-2xl md:tracking-widest">
             <Image
               src="/icon.png"
               alt="Syah Heavy Equipment Logo"
               width={32}
               height={32}
-              className="inline-block mr-2"
+              className="mr-1 inline-block"
             />
-            SYAH <span className="text-yellow-600">HEAVY EQUIPMENT</span>
+            <span>SYAH <span className="text-amber-400">HEAVY EQUIPMENT</span></span>
           </Link>
 
           {/* Navigasi Desktop */}
@@ -121,13 +121,13 @@ export default function PublicNavbar() {
               );
             })}
             
-            <Link href="/contact" className="px-5 py-2 border border-yellow-600 text-yellow-600 hover:bg-yellow-600 hover:text-neutral-950 font-bold uppercase text-xs transition-all">
+            <Link href="/contact" className="border border-amber-400/70 px-5 py-2 text-xs font-bold uppercase tracking-wider text-amber-300 transition-all hover:bg-amber-400 hover:text-[#090d16]">
               Hubungi Kami
             </Link>
           </div>
 
           {/* Tombol Pemicu Menu Mobile */}
-          <button className="md:hidden text-white p-2" onClick={() => setIsOpen(!isOpen)}>
+          <button aria-label={isOpen ? "Tutup menu" : "Buka menu"} className="p-2 text-white md:hidden" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>

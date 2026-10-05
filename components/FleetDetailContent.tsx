@@ -122,14 +122,14 @@ Mohon informasi lebih lanjut mengenai ketersediaan dan prosedur pembeliannya. Te
         </Link>
 
         {/* Hero Section dengan Multi-Image Scroll */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
-          <span className="text-yellow-600 font-bold uppercase tracking-widest text-xs md:text-sm">{fleet.category}</span>
-          <h1 className="text-3xl md:text-6xl font-bold font-barlow uppercase mt-2 mb-6 leading-tight">{fleet.title}</h1>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45 }} className="mb-12">
+          <span className="font-mono text-xs font-bold uppercase tracking-[.2em] text-amber-400 md:text-sm">{fleet.category} <span className="text-slate-600">/ EQUIPMENT PROFILE</span></span>
+          <h1 className="mb-6 mt-2 font-barlow text-3xl font-bold uppercase leading-[.95] tracking-tight md:text-6xl">{fleet.title}</h1>
           
           {/* Scrollable Image Gallery */}
           <div className="flex gap-4 overflow-x-auto pb-4 snap-x scrollbar-thin [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-neutral-700">
             {images.map((url: string, idx: number) => (
-              <div key={idx} className="relative min-w-75 md:min-w-150 h-64 md:h-112.5 bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden snap-start shrink-0">
+              <div key={idx} className="relative h-64 min-w-75 shrink-0 snap-start overflow-hidden border border-white/10 bg-[#111827] md:h-112.5 md:min-w-150">
                 <Image
                   src={url}
                   alt={`${fleet.title} - Image ${idx + 1}`}
@@ -159,8 +159,8 @@ Mohon informasi lebih lanjut mengenai ketersediaan dan prosedur pembeliannya. Te
             {fleet.specs && Object.keys(fleet.specs).length > 0 ? (
               <div className="grid grid-cols-3 gap-4">
                 {Object.entries(fleet.specs).map(([key, value]: any) => (
-                  <div key={key} className="p-4 border border-neutral-800 rounded-lg bg-neutral-900/40 hover:border-neutral-700 transition-colors">
-                      <span className="text-slate-500 text-xs block uppercase mb-1 font-medium tracking-wider">{key}</span>
+                  <div key={key} className="border border-white/[.08] bg-[#111827]/70 p-4 transition-colors hover:border-amber-400/40">
+                      <span className="mb-1 block font-mono text-[10px] uppercase tracking-wider text-slate-500">{key}</span>
                       <span className="font-bold text-sm md:text-base text-white">{value}</span>
                   </div>
                 ))}
@@ -171,7 +171,7 @@ Mohon informasi lebih lanjut mengenai ketersediaan dan prosedur pembeliannya. Te
           </div>
 
           {/* Right Column: Sidebar Stats (Menampilkan SEMUA Kolom Tabel) */}
-          <div className="bg-neutral-900 border border-neutral-800 p-6 md:p-8 self-start rounded-xl shadow-lg space-y-6">
+          <div className="self-start space-y-6 border border-white/10 bg-[#111827] p-6 shadow-2xl md:p-8">
             <h4 className="font-bold font-barlow text-lg md:text-xl border-b border-neutral-800 pb-4 uppercase tracking-wider text-yellow-600">
               Ringkasan Unit
             </h4>

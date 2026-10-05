@@ -5,13 +5,14 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="bg-neutral-900 border-t border-neutral-800 text-slate-400 pt-12 pb-28 px-4 md:px-6 w-full overflow-hidden">
+    <footer className="relative w-full overflow-hidden border-t border-white/10 bg-[#090d16] px-4 pb-28 pt-14 text-slate-400 md:px-6">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
       {/* Grid diatur menjadi 2 kolom di mobile, 4 kolom di desktop */}
       <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
         
         {/* Brand Section - Menempati 2 kolom di mobile agar full width */}
-        <div className="col-span-2 lg:col-span-1 space-y-4">
-          <Link href="/" className="font-barlow font-bold text-xl md:text-2xl tracking-widest text-white flex items-center gap-2">
+        <div className="col-span-2 space-y-4 lg:col-span-1">
+          <Link href="/" className="flex items-center gap-2 font-barlow text-xl font-bold tracking-widest text-white md:text-2xl">
             <Image
               src="/icon.png"
               alt="Syah Heavy Equipment Logo"
@@ -19,16 +20,16 @@ export default function Footer() {
               height={32}
               className="inline-block mr-2"
             />
-            SYAH <span className="text-yellow-600">HEAVY EQUIPMENT</span>
+            <span>SYAH <span className="text-amber-400">HEAVY EQUIPMENT</span></span>
           </Link>
-          <p className="text-xs md:text-sm leading-relaxed max-w-xs">
+          <p className="max-w-xs text-xs leading-relaxed md:text-sm">
             Solusi alat berat terintegrasi dengan teknologi IoT untuk efisiensi operasional maksimal.
           </p>
         </div>
 
         {/* Navigasi - Berdampingan dengan Dukungan di mobile */}
         <div className="col-span-1">
-          <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs md:text-sm">Navigasi</h4>
+          <h4 className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[.2em] text-white md:text-xs">Navigasi</h4>
           <ul className="space-y-3 text-xs md:text-sm">
             <li><Link href="/" className="hover:text-yellow-600 transition-colors">Beranda</Link></li>
             <li><Link href="/fleet" className="hover:text-yellow-600 transition-colors">Armada</Link></li>
@@ -40,7 +41,7 @@ export default function Footer() {
 
         {/* Dukungan */}
         <div className="col-span-1">
-          <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs md:text-sm">Dukungan</h4>
+          <h4 className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[.2em] text-white md:text-xs">Dukungan</h4>
           <ul className="space-y-3 text-xs md:text-sm">
             <li><Link href="/region" className="hover:text-yellow-600 transition-colors">Wilayah</Link></li>
             <li><Link href="/project" className="hover:text-yellow-600 transition-colors">Proyek</Link></li>
@@ -52,7 +53,7 @@ export default function Footer() {
 
         {/* Kontak - Menempati 2 kolom di mobile agar rapi */}
         <div className="col-span-2 lg:col-span-1">
-          <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs md:text-sm">Kontak</h4>
+          <h4 className="mb-4 font-mono text-[10px] font-bold uppercase tracking-[.2em] text-white md:text-xs">Kontak</h4>
           <ul className="space-y-3 text-xs md:text-sm">
             <li className="flex items-start gap-3">
               <MapPin size={16} className="text-yellow-600 shrink-0 mt-0.5" />
@@ -71,7 +72,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="max-w-7xl mx-auto border-t border-neutral-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs uppercase tracking-widest">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-[10px] uppercase tracking-widest md:flex-row md:text-xs">
         <p className="text-center md:text-left">© {new Date().getFullYear()} <Link href="/sign-in" className="text-yellow-600">Syah Heavy Equipment</Link>. All rights reserved.</p>
         <div className="flex gap-6">
           <FaLinkedin size={18} className="hover:text-yellow-600 cursor-pointer transition-colors" />

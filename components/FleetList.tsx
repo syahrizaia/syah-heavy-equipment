@@ -96,13 +96,14 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
   };
 
   return (
-    <section className="py-24 px-4 md:px-6 max-w-7xl mx-auto w-full overflow-hidden">
+    <section className="mx-auto w-full max-w-7xl overflow-hidden px-4 py-24 md:px-6">
       
       {/* --- SECTION: UNIT TERSEDIA --- */}
       <div className="mb-20">
        <div className="mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
-            <h2 className="text-3xl md:text-5xl font-bold font-barlow text-white uppercase mb-4">
+            <p className="mb-2 font-mono text-[10px] uppercase tracking-[.22em] text-amber-400">SHE / Fleet inventory</p>
+            <h2 className="mb-4 font-barlow text-3xl font-bold uppercase text-white md:text-5xl">
               Armada Tersedia
             </h2>
             <p className="text-slate-400 max-w-xl text-sm md:text-base">
@@ -110,7 +111,7 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
             </p>
           </div>
 
-          <form onSubmit={handleSearchSubmit} className="w-full md:w-80 flex gap-2">
+          <form onSubmit={handleSearchSubmit} className="flex w-full gap-2 md:w-96">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
               <input
@@ -118,12 +119,12 @@ export default function FleetList({ initialData }: { initialData: any[] }) {
                 placeholder="Cari armada atau model..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-neutral-900 border border-neutral-800 rounded pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-yellow-600 transition-colors"
+                className="w-full border border-white/10 bg-[#111827] py-3 pl-9 pr-4 text-sm text-white transition-colors focus:border-amber-400"
               />
             </div>
             <button
               type="submit"
-              className="bg-yellow-600 text-neutral-950 px-4 py-2 font-bold uppercase text-xs tracking-widest hover:bg-white transition-colors"
+              className="bg-amber-400 px-5 py-3 text-xs font-extrabold uppercase tracking-widest text-[#090d16] transition-colors hover:bg-amber-300"
             >
               Cari
             </button>

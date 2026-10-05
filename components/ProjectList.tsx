@@ -46,23 +46,25 @@ export default function ProjectList({ projects }: { projects: any[] }) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="group relative overflow-hidden bg-neutral-900 border border-neutral-800"
+              whileHover={{ y: -5 }}
+              transition={{ duration: 0.3 }}
+              className="group relative overflow-hidden border border-white/[.09] bg-[#111827] transition-colors hover:border-amber-400/50"
             >
-              <div className="h-64 bg-neutral-800 flex items-center justify-center relative">
+              <div className="relative flex h-64 items-center justify-center overflow-hidden bg-[#090d16]">
                 <Image
                   src={project.image_url} 
                   alt={project.title}
                   fill
-                  className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                  className="object-cover opacity-80 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
                 />
               </div>
               
-              <div className="p-8">
-                <div className="flex items-center gap-2 text-yellow-600 mb-4">
+              <div className="p-6 sm:p-8">
+                <div className="mb-4 flex items-center gap-2 text-amber-400">
                   <MapPin size={16} />
                   <span className="text-xs font-bold uppercase tracking-wider">{project.location}</span>
                 </div>
-                <h3 className="text-2xl font-bold font-barlow text-white mb-2 group-hover:text-yellow-600 transition-colors">
+                <h3 className="mb-2 font-barlow text-2xl font-bold text-white transition-colors group-hover:text-amber-300">
                   {project.title}
                 </h3>
                 <p className="text-slate-400 mb-6 text-sm">{project.description}</p>

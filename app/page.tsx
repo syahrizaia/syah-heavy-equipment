@@ -14,7 +14,7 @@ export default function Home() {
       <PublicNavbar />
 
       {/* Konten Halaman - Berikan padding top/bottom jika navbar/footer Anda berposisi fixed */}
-      <main className="flex-1 w-full">
+      <div className="flex-1 w-full">
         <LandingPage />
 
         <AIConsultant />
@@ -22,7 +22,7 @@ export default function Home() {
         <ShareWebsiteButton />
 
         <ScrollToTopButton />
-      </main>
+      </div>
 
       <Footer />
     </div>

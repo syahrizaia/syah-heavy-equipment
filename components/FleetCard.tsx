@@ -2,7 +2,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Weight, Gauge, Zap } from "lucide-react";
+import { ArrowRight, Weight, Gauge, Zap, Radio } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -30,15 +30,18 @@ export default function FleetCard({ fleet }: { fleet: any }) {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="group relative bg-neutral-900 border border-neutral-800 p-6 rounded-2xl overflow-hidden hover:border-yellow-600/50 transition-colors"
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.45 }}
+      whileHover={{ y: -5 }}
+      className="group relative overflow-hidden border border-white/[.09] bg-[#111827] p-4 transition-colors hover:border-amber-400/50 sm:p-5"
     >
       {/* Garis Aksen Industrial */}
-      <div className="absolute top-0 left-0 w-1 h-full bg-yellow-600/20 group-hover:bg-yellow-600 transition-colors" />
+      <div className="absolute left-0 top-0 z-10 h-full w-0.5 bg-amber-400/30 transition-colors group-hover:bg-amber-400" />
       
-      <div className="mb-6 h-48 bg-neutral-950 rounded-lg flex items-center justify-center overflow-hidden">
+      <div className="relative mb-5 h-48 overflow-hidden border border-white/[.06] bg-[#090d16]">
+        <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5 bg-[#090d16]/85 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-emerald-300"><Radio size={11} className="signal-glow"/> Unit tersedia</div>
         <Image
           src={getFirstImage()}
           alt={fleet?.title || "Unit alat berat"}
@@ -46,7 +49,7 @@ export default function FleetCard({ fleet }: { fleet: any }) {
           height={300}
           loading="lazy"
           sizes="(max-width: 768px) 100vw, 400px"
-          className="object-cover w-full h-full opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
+          className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
         />
       </div>
 
@@ -54,38 +57,38 @@ export default function FleetCard({ fleet }: { fleet: any }) {
         <h3 className="text-2xl font-bold font-barlow text-white mb-1 tracking-tight">
           {fleet?.title || "Tanpa Nama"}
         </h3>
-        <p className="text-yellow-600 font-medium text-sm">
+        <p className="font-mono text-xs uppercase tracking-wider text-amber-400">
           {fleet?.model || "-"}
         </p>
       </div>
 
       <div className="mb-5">
-        <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-0.5">
+          <span className="mb-1 block font-mono text-[9px] uppercase tracking-[.18em] text-slate-500">
           Estimasi Harga
         </span>
-        <span className={`text-xl font-extrabold font-mono ${
-          fleet?.price ? "text-white" : "text-yellow-600 italic text-base"
+        <span className={`font-mono text-lg font-bold ${
+          fleet?.price ? "text-white" : "text-amber-400 italic text-sm"
         }`}>
           {formatPrice(fleet?.price)}
         </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 mb-6 border-y border-neutral-800 py-4">
+      <div className="mb-5 grid grid-cols-3 gap-2 border-y border-white/[.08] py-4">
         <div className="text-center">
           <Weight size={18} className="mx-auto text-slate-400 mb-1" />
-          <span className="text-[10px] text-slate-500 uppercase">{specs.weight || "-"}</span>
+          <span className="font-mono text-[9px] uppercase text-slate-400">{specs.weight || "-"}</span>
         </div>
         <div className="text-center border-x border-neutral-800">
           <Gauge size={18} className="mx-auto text-slate-400 mb-1" />
-          <span className="text-[10px] text-slate-500 uppercase">{specs.power || "-"}</span>
+          <span className="font-mono text-[9px] uppercase text-slate-400">{specs.power || "-"}</span>
         </div>
         <div className="text-center">
           <Zap size={18} className="mx-auto text-slate-400 mb-1" />
-          <span className="text-[10px] text-slate-500 uppercase">{specs.capacity || "-"}</span>
+          <span className="font-mono text-[9px] uppercase text-slate-400">{specs.capacity || "-"}</span>
         </div>
       </div>
 
-      <Link href={`/fleet/${fleet?.id}`} className="w-full py-3 flex items-center justify-center gap-2 bg-neutral-950 border border-neutral-800 hover:bg-yellow-600 hover:text-white transition-all font-bold text-sm uppercase tracking-widest">
+      <Link href={`/fleet/${fleet?.id}`} className="flex w-full items-center justify-center gap-2 border border-white/10 bg-white/[.03] py-3 text-xs font-bold uppercase tracking-[.14em] transition-all hover:border-amber-400 hover:bg-amber-400 hover:text-[#111827]">
         Lihat Detail <ArrowRight size={16} />
       </Link>
     </motion.div>

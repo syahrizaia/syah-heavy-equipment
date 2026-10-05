@@ -80,6 +80,11 @@ export default function TrackingPage() {
     return "Perbaikan / Maintenance Lokasi";
   };
 
+  const currentStageIndex = Number(shipment.current_stage_idx);
+  const progressPercent = logs.length > 1 && Number.isFinite(currentStageIndex)
+    ? Math.min(100, Math.max(0, (currentStageIndex / (logs.length - 1)) * 100))
+    : 0;
+
   return (
     <div className="bg-neutral-950 text-white min-h-screen flex flex-col md:flex-row pt-20">
       
@@ -133,22 +138,58 @@ export default function TrackingPage() {
 
         {/* TAHAPAN PENGIRIMAN (STEPPER LOG) */}
         <div className="flex-1">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Tahapan Progress Mobilisasi</h3>
+          <div className="mb-5 flex items-center justify-between gap-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">Tahapan Progress Mobilisasi</h3>
+            <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wider text-emerald-300">
+              <span className="status-led h-1.5 w-1.5 rounded-full bg-emerald-400" /> Live
+            </span>
+          </div>
+
+          <div className="mb-6">
+            <div className="mb-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-slate-500">
+              <span>Progress pengiriman</span>
+              <span className="text-amber-300">{Math.round(progressPercent)}%</span>
+            </div>
+            <div
+              className="h-1.5 overflow-hidden bg-neutral-800"
+              role="progressbar"
+              aria-label="Progress mobilisasi"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(progressPercent)}
+            >
+              <div className="mobilization-progress h-full transition-[width] duration-700" style={{ width: `${progressPercent}%` }} />
+            </div>
+          </div>
           
-          <div className="relative border-l border-neutral-800 ml-3.5 pl-6 space-y-6">
+          <div className="relative ml-3.5">
             {logs.map((log, index) => {
               const isCompleted = index <= shipment.current_stage_idx;
               const isCurrent = index === shipment.current_stage_idx;
+              const hasNextStage = index < logs.length - 1;
 
               return (
-                <div key={log.id} className="relative">
-                  <span className={`absolute -left-[31px] top-0.5 w-4 h-4 rounded-full flex items-center justify-center border-2 transition-all ${
+                <div key={log.id} className={`relative pl-6 ${hasNextStage ? "pb-6" : ""}`}>
+                  {hasNextStage && (
+                    <span
+                      aria-hidden="true"
+                      className={`absolute bottom-0 left-[7px] top-4 w-0.5 ${
+                        index < shipment.current_stage_idx
+                          ? "timeline-flow-complete"
+                          : isCurrent
+                            ? "timeline-flow-active"
+                            : "timeline-flow-pending"
+                      }`}
+                    />
+                  )}
+                  <span className={`absolute left-0 top-0.5 flex h-4 w-4 items-center justify-center rounded-full border-2 transition-all ${
                     isCurrent 
                       ? "bg-yellow-600 border-yellow-500 scale-125 shadow-lg shadow-yellow-600/30 ring-4 ring-neutral-900" 
                       : isCompleted 
                         ? "bg-neutral-900 border-yellow-600 text-yellow-500" 
                         : "bg-neutral-950 border-neutral-800"
                   }`}>
+                    {isCurrent && <span aria-hidden="true" className="stage-ripple absolute inset-0 rounded-full border border-amber-300" />}
                     {isCompleted && !isCurrent && <CheckCircle2 size={10} className="fill-yellow-600 text-neutral-950" />}
                   </span>
 

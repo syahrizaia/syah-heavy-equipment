@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #090d16;
+  --foreground: #f8fafc;
 }
 
 @theme inline {
@@ -10,18 +10,115 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-barlow: "Arial Narrow", "Roboto Condensed", var(--font-geist-sans), sans-serif;
+  --font-oswald: "Arial Narrow", "Roboto Condensed", var(--font-geist-sans), sans-serif;
+  --color-yellow-500: #f59e0b;
+  --color-yellow-600: #eab308;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  background-image: url('/noise.png'); /* Gambar tekstur halus */
+  background-image: url('/noise.png');
+  background-size: 220px 220px;
+}
+
+::selection { background: #f59e0b; color: #090d16; }
+
+.industrial-grid {
+  background-image: linear-gradient(rgba(148, 163, 184, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, .035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: grid-drift 54s linear infinite;
+}
+
+@keyframes grid-drift {
+  to { background-position: 48px 48px; }
+}
+
+@keyframes hero-image-drift {
+  from { transform: scale(1.015) translate3d(0, 0, 0); }
+  to { transform: scale(1.075) translate3d(-.6%, .4%, 0); }
+}
+
+@keyframes telemetry-sweep {
+  0% { transform: translateY(-130%); opacity: 0; }
+  12%, 82% { opacity: .75; }
+  100% { transform: translateY(560%); opacity: 0; }
+}
+
+@keyframes signal-glow {
+  0%, 100% { opacity: .72; filter: drop-shadow(0 0 0 rgba(245,158,11,0)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 7px rgba(245,158,11,.55)); }
+}
+
+@keyframes progress-flow {
+  to { background-position: 30px 0; }
+}
+
+@keyframes stage-ripple {
+  0% { transform: scale(.8); opacity: .7; }
+  75%, 100% { transform: scale(1.9); opacity: 0; }
+}
+
+@keyframes timeline-flow {
+  to { background-position: 0 12px; }
+}
+
+.hero-image-drift { animation: hero-image-drift 28s ease-in-out infinite alternate; }
+.hero-telemetry-sweep { animation: telemetry-sweep 9s ease-in-out infinite; }
+.signal-glow { animation: signal-glow 3.2s ease-in-out infinite; }
+.status-led { animation: signal-glow 2.4s ease-in-out infinite; }
+.mobilization-progress {
+  background-image: repeating-linear-gradient(110deg, #f59e0b 0 9px, rgba(245, 158, 11, .22) 9px 15px, transparent 15px 21px);
+  background-size: 30px 100%;
+  animation: progress-flow 1.6s linear infinite;
+}
+.stage-ripple { animation: stage-ripple 2s cubic-bezier(.2,.7,.3,1) infinite; }
+.timeline-flow-complete {
+  background-image: repeating-linear-gradient(to bottom, rgba(245, 158, 11, .8) 0 3px, transparent 3px 7px);
+  background-size: 2px 12px;
+  animation: timeline-flow 2.8s linear infinite;
+}
+.timeline-flow-active {
+  background-image: repeating-linear-gradient(to bottom, #fbbf24 0 4px, rgba(245, 158, 11, .16) 4px 8px);
+  background-size: 2px 12px;
+  animation: timeline-flow 1.25s linear infinite;
+  box-shadow: 0 0 7px rgba(245, 158, 11, .55);
+}
+.timeline-flow-pending {
+  background-image: repeating-linear-gradient(to bottom, rgba(148, 163, 184, .55) 0 2px, transparent 2px 8px);
+  background-size: 2px 12px;
+  animation: timeline-flow 3.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* Shared industrial surface system for public pages and operations screens. */
+main:not(.industrial-grid) {
+  background-image: linear-gradient(rgba(148, 163, 184, .022) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, .022) 1px, transparent 1px);
+  background-size: 52px 52px;
+  background-attachment: fixed;
+}
+
+.text-yellow-600, .text-yellow-500 { color: #f59e0b; }
+.hover\:text-yellow-600:hover, .hover\:text-yellow-500:hover { color: #fbbf24; }
+.bg-yellow-600 { background-color: #f59e0b; }
+.hover\:bg-yellow-600:hover { background-color: #fbbf24; }
+.border-yellow-600 { border-color: #f59e0b; }
+.hover\:border-yellow-600:hover { border-color: #f59e0b; }
+
+input, textarea, select {
+  accent-color: #f59e0b;
+}
+
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
+  outline: 2px solid rgba(245, 158, 11, .8);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  main:not(.industrial-grid) { background-size: 36px 36px; background-attachment: scroll; }
 }
