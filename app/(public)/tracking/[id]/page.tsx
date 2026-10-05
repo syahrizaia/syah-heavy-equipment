@@ -2,15 +2,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Truck, MapPin, CheckCircle2, Clock, ArrowLeft 
+import {
+  MapPin, CheckCircle2, Clock, ArrowLeft
 } from "lucide-react";
-import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabase";
 import { useParams, useRouter } from "next/navigation"; // Tambahkan useRouter di sini
 import { toast } from "sonner";
-
-const MapTracking3D = dynamic(() => import("@/components/MapTracking3D"), { ssr: false });
+import Equipment3DViewer from "@/components/tracking/Equipment3DViewer";
 
 // Mock data dengan koordinat awal terintegrasi
 const mockShipment = {
@@ -172,32 +170,9 @@ export default function TrackingPage() {
         </div>
       </div>
 
-      {/* PANEL KANAN: LIVE 3D MAP FULL ENGINE */}
-      <div className="flex-1 relative h-screen bg-neutral-950">
-        
-        {/* Overlay Indikator Status Gps */}
-        <div className="absolute top-4 left-4 z-10 bg-neutral-900/90 border border-neutral-800 backdrop-blur-md px-4 py-2.5 rounded-lg text-xs flex items-center gap-3 shadow-2xl">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-slate-300 font-medium">Telemetri GPS: <span className="text-white font-bold">Aktif Terhubung</span></span>
-        </div>
-
-        {/* Komponen Peta Utama Murni */}
-        <MapTracking3D
-            latitude={shipment.current_lat}
-            longitude={shipment.current_lng}
-            itemName={shipment.item_name}
-        />
-        
-        {/* Kontrol HUD */}
-        <div className="absolute bottom-6 right-6 z-10 flex gap-2 bg-neutral-900 p-1.5 border border-neutral-800 rounded-lg text-[11px] text-slate-400 backdrop-blur-md shadow-2xl">
-          <div className="px-3 py-1.5 font-mono text-[10px] flex items-center gap-2 border-r border-neutral-800 text-slate-300">
-            <span className="text-yellow-500 font-bold">POSISI LIVE:</span> {shipment.current_lat.toFixed(4)}, {shipment.current_lng.toFixed(4)}
-          </div>
-          <button className="px-3 py-1.5 bg-yellow-600 text-neutral-950 font-bold rounded shadow flex items-center gap-1">
-            <Truck size={12} /> 3D Terrain
-          </button>
-        </div>
-
+      {/* PANEL KANAN: VIEWER ALAT BERAT DAN TELEMETRI LIVE */}
+      <div className="flex-1 relative h-[70vh] md:h-screen bg-neutral-950">
+        <Equipment3DViewer id={String(shipmentId)} itemName={shipment.item_name} />
       </div>
 
     </div>

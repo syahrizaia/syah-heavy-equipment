@@ -12,6 +12,8 @@
     "@ai-sdk/google": "^3.0.81",
     "@ai-sdk/openai": "^3.0.70",
     "@ai-sdk/react": "^3.0.204",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.106.2",
     "ai": "^6.0.202",
@@ -23,7 +25,8 @@
     "react-dom": "19.2.4",
     "react-icons": "^5.6.0",
     "recharts": "^3.8.1",
-    "sonner": "^2.0.7"
+    "sonner": "^2.0.7",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
