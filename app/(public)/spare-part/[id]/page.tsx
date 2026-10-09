@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createServerSupabase } from "@/lib/supabase-server";
 import PartDetailContent from "@/components/PartDetailContent";
 import { notFound } from "next/navigation";

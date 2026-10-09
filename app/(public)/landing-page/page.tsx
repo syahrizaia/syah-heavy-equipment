@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createServerSupabase } from "@/lib/supabase-server";
 import Link from "next/link";
 import dynamic from "next/dynamic";

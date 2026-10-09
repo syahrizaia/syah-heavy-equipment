@@ -25,7 +25,7 @@ export default function TrackingLandingPage() {
 
     try {
       // 1. Cek ke database Supabase (mencari berdasarkan ID atau No. Resi)
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("shipments")
         .select("id, tracking_number")
         .or(`id.eq.${targetId},tracking_number.eq.${targetId}`)

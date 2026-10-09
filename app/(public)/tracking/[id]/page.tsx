@@ -89,7 +89,7 @@ export default function TrackingPage() {
     <div className="bg-neutral-950 text-white min-h-screen flex flex-col md:flex-row pt-20">
       
       {/* PANEL KIRI: DETAIL & TAHAPAN LOGISTIK */}
-      <div className="w-full md:w-[450px] bg-neutral-900 border-r border-neutral-800 p-6 flex flex-col h-screen overflow-y-auto global-scrollbar">
+      <div className="w-full md:w-[450px] shrink-0 bg-neutral-900 border-b md:border-b-0 md:border-r border-neutral-800 p-4 sm:p-6 flex flex-col md:h-[calc(100vh-5rem)] md:overflow-y-auto global-scrollbar">
         
         {/* Navigasi Back Modifikasi (Menggunakan router.back) */}
         <button 
@@ -104,7 +104,7 @@ export default function TrackingPage() {
           <span className={`text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded border ${getTransactionBadge(shipment.transaction_type)}`}>
             {getTransactionLabel(shipment.transaction_type)}
           </span>
-          <h1 className="text-xl font-bold font-barlow uppercase tracking-tight mt-3 text-slate-100">
+          <h1 className="text-xl font-bold font-barlow uppercase tracking-tight mt-3 text-slate-100 break-words">
             {shipment.item_name}
           </h1>
           <p className="text-xs text-slate-400 font-mono mt-1">No. Resi: <span className="text-yellow-500 font-bold">{shipment.tracking_number}</span></p>
@@ -116,7 +116,7 @@ export default function TrackingPage() {
             <Clock size={16} className="text-yellow-600 shrink-0" />
             <div>
               <p className="text-slate-500 font-medium">Estimasi Tiba di Lokasi</p>
-              <p className="text-slate-200 font-bold">{shipment.estimated_delivery}</p>
+              <p className="text-slate-200 font-bold break-words">{shipment.estimated_delivery}</p>
             </div>
           </div>
           <div className="border-t border-neutral-900 my-2" />
@@ -124,14 +124,14 @@ export default function TrackingPage() {
             <MapPin size={16} className="text-emerald-500 shrink-0 mt-0.5" />
             <div>
               <p className="text-slate-500 font-medium">Asal Pengiriman</p>
-              <p className="text-slate-300">{shipment.origin_address}</p>
+              <p className="text-slate-300 break-words">{shipment.origin_address}</p>
             </div>
           </div>
           <div className="flex gap-2.5">
             <MapPin size={16} className="text-red-500 shrink-0 mt-0.5" />
             <div>
               <p className="text-slate-500 font-medium">Tujuan Akhir Client</p>
-              <p className="text-slate-300">{shipment.destination_address}</p>
+              <p className="text-slate-300 break-words">{shipment.destination_address}</p>
             </div>
           </div>
         </div>
@@ -198,9 +198,8 @@ export default function TrackingPage() {
                       {log.stage_name}
                     </h4>
                     <p className="text-slate-400 mt-1 leading-relaxed">{log.description}</p>
-                    <div className="flex items-center gap-4 mt-1.5 text-[11px] text-slate-500">
-                      <span className="flex items-center gap-1"><MapPin size={11} /> {log.location_name}</span>
-                      <span>•</span>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-[11px] text-slate-500">
+                      <span className="flex items-center gap-1 min-w-0"><MapPin size={11} className="shrink-0" /> {log.location_name}</span>
                       <span>{log.time}</span>
                     </div>
                   </div>
@@ -212,7 +211,7 @@ export default function TrackingPage() {
       </div>
 
       {/* PANEL KANAN: VIEWER ALAT BERAT DAN TELEMETRI LIVE */}
-      <div className="flex-1 relative h-[70vh] md:h-screen bg-neutral-950">
+      <div className="flex-1 relative bg-neutral-950 md:h-[calc(100vh-5rem)] md:min-h-0">
         <Equipment3DViewer id={String(shipmentId)} itemName={shipment.item_name} />
       </div>
 

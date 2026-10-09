@@ -52,7 +52,7 @@ export default function FleetDetailContent({ fleet }: { fleet: any }) {
         await navigator.clipboard.writeText(window.location.href);
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000); // Reset status setelah 2 detik
-      } catch (error) {
+      } catch {
         alert("Gagal menyalin tautan.");
       }
     }
